@@ -20,12 +20,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.spy;
+import static org.powermock.api.mockito.PowerMockito.when;
 import static org.powermock.api.mockito.PowerMockito.whenNew;
 
 /**
  * @author Dmitriy Konopelkin (dmitry.konopelkin@cxense.com) on (2017-07-31).
  */
-@PrepareForTest({PageViewEvent.class})
+@PrepareForTest({PageViewEvent.class, CxenseConfiguration.class})
 public class PageViewEventBuilderTest extends BaseTest {
     private PageViewEvent event;
     private PageViewEvent.Builder builder;
@@ -34,7 +36,9 @@ public class PageViewEventBuilderTest extends BaseTest {
     public void setUp() throws Exception {
         super.setUp();
         event = mock(PageViewEvent.class);
-        builder = new PageViewEvent.Builder("siteId", "location");
+        CxenseConfiguration configuration = spy(new CxenseConfiguration());
+        when(cxense.getConfiguration()).thenReturn(configuration);
+        builder = new PageViewEvent.Builder("siteId");
         whenNew(PageViewEvent.class).withAnyArguments().thenReturn(event);
     }
 
@@ -65,10 +69,22 @@ public class PageViewEventBuilderTest extends BaseTest {
     }
 
     @Test
+    public void setContentId() throws Exception {
+        String contentId = "contentId";
+        assertThat(builder, is(builder.setContentId(contentId)));
+        assertEquals(contentId, Whitebox.getInternalState(builder, "contentId"));
+    }
+
+    @Test
     public void setLocation() throws Exception {
-        String location = "location";
+        String location = "http://test.com/page_location";
         assertThat(builder, is(builder.setLocation(location)));
         assertEquals(location, Whitebox.getInternalState(builder, "location"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setLocationNotUrl() throws Exception {
+        builder.setLocation("location");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -78,9 +94,14 @@ public class PageViewEventBuilderTest extends BaseTest {
 
     @Test
     public void setReferrer() throws Exception {
-        String referrer = "referrer";
+        String referrer = "http://test.com/referrer";
         assertThat(builder, is(builder.setReferrer(referrer)));
         assertEquals(referrer, Whitebox.getInternalState(builder, "referrer"));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void setReferrerNotUrl() throws Exception {
+        builder.setReferrer("location");
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -187,7 +208,18 @@ public class PageViewEventBuilderTest extends BaseTest {
 
     @Test
     public void build() throws Exception {
+        Whitebox.setInternalState(builder, "location", "http://test.com/page_location");
         assertThat(event, is(builder.build()));
     }
 
+    @Test
+    public void buildUrlLess() throws Exception {
+        Whitebox.setInternalState(builder, "contentId", "location");
+        assertThat(event, is(builder.build()));
+    }
+
+    @Test(expected = IllegalStateException.class)
+    public void buildFailed() throws Exception {
+        builder.build();
+    }
 }
