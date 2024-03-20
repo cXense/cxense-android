@@ -10,14 +10,18 @@ import java.util.UUID
 @RestrictTo(RestrictTo.Scope.LIBRARY)
 class UserProvider(
     private val advertisingIdProvider: AdvertisingIdProvider,
+    private val prefsStorage: PrefsStorage,
 ) {
     private var currentUserId: String? = null
+    private val fallbackUserId: String = prefsStorage.defaultUserId ?: UUID.randomUUID().toString().also {
+        prefsStorage.defaultUserId = it
+    }
 
     val defaultUser: ContentUser by lazy { ContentUser(userId) }
     var userId: String
-        get() = currentUserId ?: advertisingIdProvider.defaultUserId?.also {
+        get() = currentUserId ?: advertisingIdProvider.defaultUserId.takeUnless { it == BAD_AAID }?.also {
             currentUserId = it
-        } ?: UUID.randomUUID().toString()
+        } ?: fallbackUserId
         set(value) {
             currentUserId = value.also {
                 require(it.matches(ID_REGEX.toRegex())) {
@@ -29,5 +33,6 @@ class UserProvider(
 
     companion object {
         const val ID_REGEX = "^[\\w-+.]{16,}$"
+        internal const val BAD_AAID = "00000000-0000-0000-0000-000000000000"
     }
 }
