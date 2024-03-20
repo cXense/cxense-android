@@ -35,11 +35,10 @@ class EventRepository(
 
     fun putEventRecordInDatabase(eventRecord: EventRecord): Long = databaseHelper.save(eventRecord)
 
-    fun deleteOutdatedEvents(outdatePeriod: Long): Int =
-        databaseHelper.delete(
-            "${EventRecord.TIME} < ?",
-            (System.currentTimeMillis() - outdatePeriod).toString()
-        )
+    fun deleteOutdatedEvents(outdatePeriod: Long): Int = databaseHelper.delete(
+        "${EventRecord.TIME} < ?",
+        (System.currentTimeMillis() - outdatePeriod).toString()
+    )
 
     fun getNotSubmittedPvEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} = ?",
@@ -60,32 +59,29 @@ class EventRepository(
         selection: String?,
         selectionArgs: Array<out String?>?,
         limit: String? = null,
-    ): List<EventRecord> =
-        databaseHelper.query(
-            selection = selection,
-            selectionArgs = selectionArgs,
-            orderBy = "${EventRecord.TIME} ASC",
-            limit = limit
-        ).map { it.toEventRecord() }
+    ): List<EventRecord> = databaseHelper.query(
+        selection = selection,
+        selectionArgs = selectionArgs,
+        orderBy = "${EventRecord.TIME} ASC",
+        limit = limit
+    ).map { it.toEventRecord() }
 
-    fun getPvEventFromDatabase(eventId: String): EventRecord? =
-        databaseHelper.query(
-            selection = "${EventRecord.CUSTOM_ID} = ? AND ${EventRecord.TYPE} = ?",
-            selectionArgs = arrayOf(eventId, PageViewEvent.EVENT_TYPE),
-            orderBy = "${EventRecord.TIME} DESC",
-            limit = "1"
-        ).firstOrNull()?.toEventRecord()
+    fun getPvEventFromDatabase(eventId: String): EventRecord? = databaseHelper.query(
+        selection = "${EventRecord.CUSTOM_ID} = ? AND ${EventRecord.TYPE} = ?",
+        selectionArgs = arrayOf(eventId, PageViewEvent.EVENT_TYPE),
+        orderBy = "${EventRecord.TIME} DESC",
+        limit = "1"
+    ).firstOrNull()?.toEventRecord()
 
-    fun getEventStatuses(): List<EventStatus> =
-        databaseHelper.query(
-            columns = arrayOf(EventRecord.CUSTOM_ID, EventRecord.IS_SENT),
-            orderBy = "${EventRecord.TIME} ASC"
-        ).map {
-            EventStatus(
-                it.getAsString(EventRecord.CUSTOM_ID),
-                it.getAsBoolean(EventRecord.IS_SENT)
-            )
-        }
+    fun getEventStatuses(): List<EventStatus> = databaseHelper.query(
+        columns = arrayOf(EventRecord.CUSTOM_ID, EventRecord.IS_SENT),
+        orderBy = "${EventRecord.TIME} ASC"
+    ).map {
+        EventStatus(
+            it.getAsString(EventRecord.CUSTOM_ID),
+            it.getAsBoolean(EventRecord.IS_SENT)
+        )
+    }
 
     fun putEventTime(eventId: String, activeTime: Long) {
         try {
@@ -107,28 +103,26 @@ class EventRepository(
         }
     }
 
-    private fun EventConverter.buildEventRecord(e: Event): EventRecord? =
-        getEvents(
-            "$NOT_SENT_FILTER AND ${EventRecord.MERGE_KEY} = ? AND ${EventRecord.TIME} > ?",
-            arrayOf(e.mergeKey.toString(), (System.currentTimeMillis() - configuration.eventsMergePeriod).toString()),
-            limit = "1"
-        ).firstOrNull()?.let {
-            update(it, e)
-        } ?: toEventRecord(e)
+    private fun EventConverter.buildEventRecord(e: Event): EventRecord? = getEvents(
+        "$NOT_SENT_FILTER AND ${EventRecord.MERGE_KEY} = ? AND ${EventRecord.TIME} > ?",
+        arrayOf(e.mergeKey.toString(), (System.currentTimeMillis() - configuration.eventsMergePeriod).toString()),
+        limit = "1"
+    ).firstOrNull()?.let {
+        update(it, e)
+    } ?: toEventRecord(e)
 
-    private fun ContentValues.toEventRecord(): EventRecord =
-        EventRecord(
-            getAsString(EventRecord.TYPE),
-            getAsString(EventRecord.CUSTOM_ID),
-            getAsString(EventRecord.DATA),
-            getAsString(EventRecord.CKP),
-            getAsString(EventRecord.RND),
-            getAsLong(EventRecord.TIME),
-            getAsLong(EventRecord.SPENT_TIME),
-            getAsInteger(EventRecord.MERGE_KEY),
-            getAsLong(BaseColumns._ID),
-            getAsBoolean(EventRecord.IS_SENT)
-        )
+    private fun ContentValues.toEventRecord(): EventRecord = EventRecord(
+        getAsString(EventRecord.TYPE),
+        getAsString(EventRecord.CUSTOM_ID),
+        getAsString(EventRecord.DATA),
+        getAsString(EventRecord.CKP),
+        getAsString(EventRecord.RND),
+        getAsLong(EventRecord.TIME),
+        getAsLong(EventRecord.SPENT_TIME),
+        getAsInteger(EventRecord.MERGE_KEY),
+        getAsLong(BaseColumns._ID),
+        getAsBoolean(EventRecord.IS_SENT)
+    )
 
     companion object {
         private const val NOT_SENT_FILTER = "${EventRecord.IS_SENT} = 0"

@@ -73,19 +73,23 @@ class AnimalActivity : AppCompatActivity(R.layout.activity_animal) {
             WidgetContext.Builder("https://cxense.com").build(),
             callback = object : LoadCallback<List<WidgetItem>> {
                 override fun onSuccess(data: List<WidgetItem>) {
-                    CxenseSdk.getInstance().reportWidgetVisibilities(
-                        object : LoadCallback<Any> {
-                            override fun onSuccess(data: Any) {
-                                Timber.d("Success")
-                            }
+                    val impressions = data.mapIndexed() { index, item ->
+                        Impression(item.clickUrl ?: "", index + 1)
+                    }
+                    if (impressions.isNotEmpty()) {
+                        CxenseSdk.getInstance().reportWidgetVisibilities(
+                            object : LoadCallback<Any> {
+                                override fun onSuccess(data: Any) {
+                                    Timber.d("Success")
+                                }
 
-                            override fun onError(throwable: Throwable) {
-                                Timber.e(throwable)
-                            }
-                        },
-                        Impression(data[0].clickUrl ?: "", 1),
-                        Impression(data[1].clickUrl ?: "", 2)
-                    )
+                                override fun onError(throwable: Throwable) {
+                                    Timber.e(throwable)
+                                }
+                            },
+                            *impressions.toTypedArray()
+                        )
+                    }
                 }
 
                 override fun onError(throwable: Throwable) {

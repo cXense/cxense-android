@@ -71,57 +71,55 @@ class PageViewEventConverter(
         return result.filterNotNullValues().toMap()
     }
 
-    private fun List<ExternalUserId>.toPairs(): List<Pair<String, String>> =
-        filterNot {
-            it.userId.isEmpty()
-        }.flatMapIndexed { i, id ->
-            listOf(
-                "$EXTERNAL_USER_KEY$i" to id.userType,
-                "$EXTERNAL_USER_VALUE$i" to id.userId
-            )
-        }
+    private fun List<ExternalUserId>.toPairs(): List<Pair<String, String>> = filterNot {
+        it.userId.isEmpty()
+    }.flatMapIndexed { i, id ->
+        listOf(
+            "$EXTERNAL_USER_KEY$i" to id.userType,
+            "$EXTERNAL_USER_VALUE$i" to id.userId
+        )
+    }
 
     internal fun extractQueryData(eventRecord: EventRecord, fixUserIdFunc: () -> String): Map<String, String> =
         requireNotNull(mapAdapter.fromJson(eventRecord.data)).let {
             if (it[CKP].isNullOrEmpty()) it + (CKP to fixUserIdFunc()) else it
         }
 
-    override fun toEventRecord(event: Event): EventRecord? =
-        (event as? PageViewEvent)?.run {
-            EventRecord(
-                PageViewEvent.EVENT_TYPE,
-                eventId,
-                mapAdapter.toJson(toQueryMap()),
-                userId,
-                rnd,
-                time,
-                mergeKey = mergeKey
+    override fun toEventRecord(event: Event): EventRecord? = (event as? PageViewEvent)?.run {
+        EventRecord(
+            PageViewEvent.EVENT_TYPE,
+            eventId,
+            mapAdapter.toJson(toQueryMap()),
+            userId,
+            rnd,
+            time,
+            mergeKey = mergeKey
+        )
+    }
+
+    override fun update(oldRecord: EventRecord, event: Event): EventRecord = with(event as PageViewEvent) {
+        mapAdapter.fromJson(oldRecord.data)?.let { old ->
+            val oldIds = old.keys.filter { it.startsWith(EXTERNAL_USER_KEY) }
+            val queryMap = toQueryMap(skipExternalIds = true) - listOf(RND, TIME)
+            val ids = externalUserIds.toSet() + oldIds.map { ExternalUserId(it, old[it].orEmpty()) }
+            val map = old - oldIds + queryMap + ids.take(PageViewEvent.MAX_EXTERNAL_USER_IDS).toPairs()
+            oldRecord.copy(
+                data = mapAdapter.toJson(map)
             )
-        }
+        } ?: oldRecord
+    }
 
-    override fun update(oldRecord: EventRecord, event: Event): EventRecord =
-        with(event as PageViewEvent) {
-            mapAdapter.fromJson(oldRecord.data)?.let { old ->
-                val oldIds = old.keys.filter { it.startsWith(EXTERNAL_USER_KEY) }
-                val queryMap = toQueryMap(skipExternalIds = true) - listOf(RND, TIME)
-                val ids = externalUserIds.toSet() + oldIds.map { ExternalUserId(it, old[it].orEmpty()) }
-                val map = old - oldIds + queryMap + ids.take(PageViewEvent.MAX_EXTERNAL_USER_IDS).toPairs()
-                oldRecord.copy(
-                    data = mapAdapter.toJson(map)
-                )
-            } ?: oldRecord
-        }
-
-    internal fun updateActiveTimeData(data: String, activeTime: Long): String =
+    internal fun updateActiveTimeData(data: String, activeTime: Long): String = requireNotNull(
+        mapAdapter.fromJson(data)
+    ).let {
         // some black magic with map
-        requireNotNull(mapAdapter.fromJson(data)).let {
-            val map = it + mapOf(
-                ACTIVE_RND to it[RND].toString(),
-                ACTIVE_TIME to it[TIME].toString(),
-                ACTIVE_SPENT_TIME to activeTime.toString()
-            )
-            mapAdapter.toJson(map)
-        }
+        val map = it + mapOf(
+            ACTIVE_RND to it[RND].toString(),
+            ACTIVE_TIME to it[TIME].toString(),
+            ACTIVE_SPENT_TIME to activeTime.toString()
+        )
+        mapAdapter.toJson(map)
+    }
 
     @Suppress("NOTHING_TO_INLINE", "UNCHECKED_CAST")
     internal inline fun <T, R> Sequence<Pair<T, R?>>.filterNotNullValues(): Sequence<Pair<T, R>> =

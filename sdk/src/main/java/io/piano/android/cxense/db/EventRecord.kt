@@ -22,8 +22,8 @@ data class EventRecord(
     var isSent: Boolean = false,
 ) {
 
-    fun toContentValues(): ContentValues =
-        ContentValues().apply {
+    fun toContentValues(): ContentValues = ContentValues()
+        .apply {
             put(TYPE, eventType)
             put(CUSTOM_ID, customId)
             put(DATA, data)

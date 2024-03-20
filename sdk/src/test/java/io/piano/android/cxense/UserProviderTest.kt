@@ -1,17 +1,19 @@
 package io.piano.android.cxense
 
+import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.times
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.util.UUID
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertNotNull
 
 class UserProviderTest {
     private val advertisingIdProvider: AdvertisingIdProvider = mock()
-    private val provider = UserProvider(advertisingIdProvider)
+    private val prefsStorage: PrefsStorage = mock {
+        on { defaultUserId } doReturn FALLBACK_USER_ID
+    }
+    private val provider = UserProvider(advertisingIdProvider, prefsStorage)
 
     @Test
     fun getUserId() {
@@ -22,9 +24,15 @@ class UserProviderTest {
     }
 
     @Test
+    fun getUserIdBadAaid() {
+        whenever(advertisingIdProvider.defaultUserId).thenReturn(UserProvider.BAD_AAID)
+        assertEquals(FALLBACK_USER_ID, provider.userId)
+    }
+
+    @Test
     fun getUserIdNotAaid() {
         whenever(advertisingIdProvider.defaultUserId).thenReturn(null)
-        assertNotNull(UUID.fromString(provider.userId))
+        assertEquals(FALLBACK_USER_ID, provider.userId)
     }
 
     @Test
@@ -36,5 +44,6 @@ class UserProviderTest {
 
     companion object {
         private const val USER_ID = "test user id"
+        private const val FALLBACK_USER_ID = "test fallback user id"
     }
 }

@@ -51,24 +51,22 @@ class DatabaseHelper(
         }
     }
 
-    fun save(eventRecord: EventRecord): Long =
-        eventRecord.id?.let { id ->
-            writableDatabase.update(
-                EventRecord.TABLE_NAME,
-                eventRecord.toContentValues(),
-                "${BaseColumns._ID} = ?",
-                arrayOf(id.toString())
-            ).toLong()
-        } ?: writableDatabase.insert(
+    fun save(eventRecord: EventRecord): Long = eventRecord.id?.let { id ->
+        writableDatabase.update(
             EventRecord.TABLE_NAME,
-            null,
-            eventRecord.toContentValues()
-        )
+            eventRecord.toContentValues(),
+            "${BaseColumns._ID} = ?",
+            arrayOf(id.toString())
+        ).toLong()
+    } ?: writableDatabase.insert(
+        EventRecord.TABLE_NAME,
+        null,
+        eventRecord.toContentValues()
+    )
 
-    fun delete(eventRecord: EventRecord): Int =
-        eventRecord.id?.let { id ->
-            delete("${BaseColumns._ID} = ?", id.toString())
-        } ?: -1
+    fun delete(eventRecord: EventRecord): Int = eventRecord.id?.let { id ->
+        delete("${BaseColumns._ID} = ?", id.toString())
+    } ?: -1
 
     fun delete(whereClause: String?, vararg whereArgs: String): Int =
         writableDatabase.delete(EventRecord.TABLE_NAME, whereClause, whereArgs)
@@ -81,29 +79,28 @@ class DatabaseHelper(
         having: String? = null,
         orderBy: String? = "${EventRecord.TIME} ASC",
         limit: String? = null,
-    ): List<ContentValues> =
-        readableDatabase.query(
-            EventRecord.TABLE_NAME,
-            columns,
-            selection,
-            selectionArgs,
-            groupBy,
-            having,
-            orderBy,
-            limit
-        ).use { c ->
-            generateSequence { if (c.moveToNext()) c else null }
-                .map(Companion::cursorRowToContentValues)
-                .toList()
-        }
+    ): List<ContentValues> = readableDatabase.query(
+        EventRecord.TABLE_NAME,
+        columns,
+        selection,
+        selectionArgs,
+        groupBy,
+        having,
+        orderBy,
+        limit
+    ).use { c ->
+        generateSequence { if (c.moveToNext()) c else null }
+            .map(Companion::cursorRowToContentValues)
+            .toList()
+    }
 
     companion object {
         const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "tracks.db"
 
         @JvmStatic
-        private fun cursorRowToContentValues(c: Cursor): ContentValues =
-            ContentValues().apply {
+        private fun cursorRowToContentValues(c: Cursor): ContentValues = ContentValues()
+            .apply {
                 for (i in 0 until c.columnCount) {
                     val name = c.columnNames[i]
                     when (c.getType(i)) {

@@ -34,7 +34,8 @@ internal class DependenciesProvider private constructor(
     private val userAgentProvider: UserAgentProvider by lazy { UserAgentProvider(BuildConfig.SDK_VERSION, context) }
     private val deviceInfoProvider: DeviceInfoProvider by lazy { DeviceInfoProvider(context) }
     private val advertisingIdProvider: AdvertisingIdProvider = AdvertisingIdProvider(context, executor)
-    internal val userProvider: UserProvider by lazy { UserProvider(advertisingIdProvider) }
+    private var prefsStorage: PrefsStorage = PrefsStorage(context)
+    internal val userProvider: UserProvider by lazy { UserProvider(advertisingIdProvider, prefsStorage) }
     internal val cxenseConfiguration: CxenseConfiguration by lazy { CxenseConfiguration() }
 
     private val okHttpClient: OkHttpClient by lazy {
