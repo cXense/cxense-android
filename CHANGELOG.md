@@ -1,5 +1,10 @@
 # Piano DMP & Content SDK for Android
 
+## v2.5.1-SNAPSHOT
+* Updated dependencies:
+    - org.jetbrains.kotlinx:kotlinx-coroutines-core [1.7.3 -> 1.8.0]
+      https://github.com/Kotlin/kotlinx.coroutines
+
 ## v2.5.0
 * Android 14 compatibility
 * Fix `sdkv=unspecified` issue

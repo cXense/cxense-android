@@ -58,13 +58,12 @@ class EventsRequestAdapter : JsonAdapter<EventDataRequest>() {
 
 object WidgetItemAdapter {
     @FromJson
-    fun fromJson(props: Map<String, Any>): WidgetItem =
-        WidgetItem(
-            props[TITLE]?.toString(),
-            props[URL]?.toString(),
-            props[CLICK_URL]?.toString(),
-            props.filterKeys { it !in listOf(TITLE, URL, CLICK_URL) }
-        )
+    fun fromJson(props: Map<String, Any>): WidgetItem = WidgetItem(
+        props[TITLE]?.toString(),
+        props[URL]?.toString(),
+        props[CLICK_URL]?.toString(),
+        props.filterKeys { it !in listOf(TITLE, URL, CLICK_URL) }
+    )
 
     @Suppress("UNUSED_PARAMETER")
     @ToJson

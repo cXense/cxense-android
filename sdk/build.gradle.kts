@@ -6,8 +6,12 @@ plugins {
     alias(libs.plugins.moshiIR)
 }
 
+@Suppress("PropertyName")
 val GROUP: String by project
+
+@Suppress("PropertyName")
 val VERSION_NAME: String by project
+
 group = GROUP
 version = VERSION_NAME
 
@@ -20,12 +24,15 @@ android {
         buildConfigField("String", "SDK_VERSION", """"$version"""")
         buildConfigField("String", "SDK_NAME", """"cxense"""")
         buildConfigField("String", "SDK_ENDPOINT", """"https://api.cxense.com"""")
-        buildConfigField("String", "AUTHORITY", """LIBRARY_PACKAGE_NAME + ".$authority"""")
+        buildConfigField("String", "AUTHORITY", """"io.piano.android.cxense.$authority"""")
 
         manifestPlaceholders += "authority" to authority
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("cxensesdk.pro")
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
@@ -53,7 +60,7 @@ kotlin {
 }
 
 ktlint {
-    version.set("0.50.0")
+    version.set("1.2.1")
     android.set(true)
 }
 

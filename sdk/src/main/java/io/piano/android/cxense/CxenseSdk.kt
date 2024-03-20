@@ -36,7 +36,8 @@ import java.util.concurrent.TimeUnit
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 class CxenseSdk(
     private val executor: ScheduledExecutorService,
-    @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
+    // Public API.
+    @Suppress("unused", "MemberVisibilityCanBePrivate")
     val configuration: CxenseConfiguration,
     private val advertisingIdProvider: AdvertisingIdProvider,
     private val userProvider: UserProvider,
@@ -98,13 +99,12 @@ class CxenseSdk(
      * @param events the events that should be pushed.
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    fun pushEvents(vararg events: Event) =
-        executor.execute {
-            eventRepository.putEventsInDatabase(events)
-            if (configuration.sendEventsAtPush) {
-                flushEventQueue()
-            }
+    fun pushEvents(vararg events: Event) = executor.execute {
+        eventRepository.putEventsInDatabase(events)
+        if (configuration.sendEventsAtPush) {
+            flushEventQueue()
         }
+    }
 
     /**
      * Tracks active time for the given page view event.
@@ -435,18 +435,17 @@ class CxenseSdk(
     private fun <T : Any> LoadCallback<T>.transform() = ApiCallback(this, errorParser)
 
     private fun <T : Any> createGenericCallback(callback: LoadCallback<T>) = object : LoadCallback<ResponseBody> {
-        override fun onSuccess(data: ResponseBody) =
-            try {
-                val callbackClazz = callback::class.java.genericInterfaces.first() as ParameterizedType
+        override fun onSuccess(data: ResponseBody) = try {
+            val callbackClazz = callback::class.java.genericInterfaces.first() as ParameterizedType
 
-                @Suppress("UNCHECKED_CAST")
-                val clazz = callbackClazz.actualTypeArguments.first() as Class<T>
-                val jsonAdapter = moshi.adapter(clazz)
-                val reader = JsonReader.of(data.source())
-                callback.onSuccess(requireNotNull(jsonAdapter.fromJson(reader)))
-            } catch (e: Exception) {
-                callback.onError(e)
-            }
+            @Suppress("UNCHECKED_CAST")
+            val clazz = callbackClazz.actualTypeArguments.first() as Class<T>
+            val jsonAdapter = moshi.adapter(clazz)
+            val reader = JsonReader.of(data.source())
+            callback.onSuccess(requireNotNull(jsonAdapter.fromJson(reader)))
+        } catch (e: Exception) {
+            callback.onError(e)
+        }
 
         override fun onError(throwable: Throwable) = callback.onError(throwable)
     }.transform()

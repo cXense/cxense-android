@@ -97,15 +97,8 @@ interface CxApi {
     fun trackUrlClick(@Url url: String): Call<Unit>
 
     @GET
-    fun getPersisted(
-        @Url url: String,
-        @Query("persisted") persistentId: String,
-    ): Call<ResponseBody>
+    fun getPersisted(@Url url: String, @Query("persisted") persistentId: String): Call<ResponseBody>
 
     @POST
-    fun postPersisted(
-        @Url url: String,
-        @Query("persisted") persistentId: String,
-        @Body data: Any,
-    ): Call<ResponseBody>
+    fun postPersisted(@Url url: String, @Query("persisted") persistentId: String, @Body data: Any): Call<ResponseBody>
 }

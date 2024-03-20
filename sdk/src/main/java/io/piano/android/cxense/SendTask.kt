@@ -21,12 +21,11 @@ class SendTask(
     var sendCallback: CxenseSdk.DispatchEventsCallback?,
 ) : Runnable {
 
-    private fun EventRecord.toEventStatus(e: Exception? = null) =
-        EventStatus(
-            customId,
-            isSent,
-            e
-        )
+    private fun EventRecord.toEventStatus(e: Exception? = null) = EventStatus(
+        customId,
+        isSent,
+        e
+    )
 
     private fun List<EventRecord>.notifyCallback(e: Exception? = null) = map { it.toEventStatus(e) }.notifyCallback()
 

@@ -10,11 +10,10 @@ import okhttp3.Response
 internal class UserAgentInterceptor(
     private val userAgentProvider: UserAgentProvider,
 ) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response =
-        chain.proceed(
-            chain.request()
-                .newBuilder()
-                .header("User-Agent", userAgentProvider.userAgent)
-                .build()
-        )
+    override fun intercept(chain: Interceptor.Chain): Response = chain.proceed(
+        chain.request()
+            .newBuilder()
+            .header("User-Agent", userAgentProvider.userAgent)
+            .build()
+    )
 }
