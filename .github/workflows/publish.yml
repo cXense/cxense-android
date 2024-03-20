@@ -23,5 +23,3 @@ jobs:
         run: chmod +x gradlew
     -   name: Upload artifacts
         run: ./gradlew publish --no-configuration-cache
-    -   name: Close repository
-        run: ./gradlew closeAndReleaseRepository --no-configuration-cache
