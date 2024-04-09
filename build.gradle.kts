@@ -8,8 +8,3 @@ plugins {
     alias(libs.plugins.moshiIR) apply false
     alias(libs.plugins.android.secrets) apply false
 }
-
-buildScan {
-    termsOfServiceUrl = "https://gradle.com/terms-of-service"
-    termsOfServiceAgree = "yes"
-}
