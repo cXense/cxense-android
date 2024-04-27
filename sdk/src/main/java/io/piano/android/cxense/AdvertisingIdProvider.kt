@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Provides AAID
  */
-class AdvertisingIdProvider(
+internal class AdvertisingIdProvider(
     private val context: Context,
     private val executor: ScheduledExecutorService,
 ) {

@@ -18,15 +18,15 @@ import java.util.Objects
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class ConversionEvent internal constructor(
-    @Json(name = "userIds") val identities: List<UserIdentity>,
-    @Json(name = "siteId") val siteId: String,
-    @Json(name = "consent") val consentOptions: List<String>,
-    @Json(name = "productId") val productId: String,
-    @Json(name = "funnelStep") val funnelStep: String,
-    @Json(name = "productPrice") val price: Double?,
-    @Json(name = "productRenewalFrequency") val renewalFrequency: String?,
-    @Json(name = "eventType") val eventType: String = EVENT_TYPE,
+public class ConversionEvent internal constructor(
+    @Json(name = "userIds") public val identities: List<UserIdentity>,
+    @Json(name = "siteId") public val siteId: String,
+    @Json(name = "consent") public val consentOptions: List<String>,
+    @Json(name = "productId") public val productId: String,
+    @Json(name = "funnelStep") public val funnelStep: String,
+    @Json(name = "productPrice") public val price: Double?,
+    @Json(name = "productRenewalFrequency") public val renewalFrequency: String?,
+    @Json(name = "eventType") public val eventType: String = EVENT_TYPE,
 ) : Event(null) {
     override val mergeKey = Objects.hash(eventType, siteId, productId)
 
@@ -42,7 +42,7 @@ class ConversionEvent internal constructor(
      * The `<number>` is limited to 3 digits. Only 'd' (days), 'w' (weeks), 'M' (months) and 'y' (years) are supported as `<units>`. The `<type>` can be one of 'R' (relative to the time the user has converted) or 'C' (calendar-based: happening at the beginning of the `<unit>`).
      * Examples: "`1yC`", "`28wR`" and so on.
      */
-    data class Builder @JvmOverloads constructor(
+    public data class Builder @JvmOverloads constructor(
         var siteId: String,
         var productId: String,
         var funnelStep: String,
@@ -55,49 +55,55 @@ class ConversionEvent internal constructor(
          * Adds known user identities to identify the user.
          * @param identities one or multiple [UserIdentity] objects.
          */
-        fun addIdentities(vararg identities: UserIdentity) = apply { this.identities.addAll(identities) }
+        public fun addIdentities(vararg identities: UserIdentity): Builder = apply {
+            this.identities.addAll(identities)
+        }
 
         /**
          * Adds known user identities to identify the user.
          * @param identities [Iterable] with [UserIdentity] objects.
          */
-        fun addIdentities(identities: Iterable<UserIdentity>) = apply { this.identities.addAll(identities) }
+        public fun addIdentities(identities: Iterable<UserIdentity>): Builder = apply {
+            this.identities.addAll(identities)
+        }
 
         /**
          * Sets site identifier
          * @param siteId The Cxense site identifier to be associated with the events.
          */
-        fun siteId(siteId: String) = apply { this.siteId = siteId }
+        public fun siteId(siteId: String): Builder = apply { this.siteId = siteId }
 
         /**
          * Sets product identifier
          * @param productId Product identifier.
          */
-        fun productId(productId: String) = apply { this.productId = productId }
+        public fun productId(productId: String): Builder = apply { this.productId = productId }
 
         /**
          * Sets funnel step
          * @param funnelStep Funnel step. Can be one of the pre-defined [FUNNEL_TYPE_CONVERT_PRODUCT], [FUNNEL_TYPE_TERMINATE_PRODUCT] and [FUNNEL_TYPE_RENEW_PRODUCT] or alternatively any string representing the step e.g. 'creditCardDetails'.
          */
-        fun funnelStep(funnelStep: String) = apply { this.funnelStep = funnelStep }
+        public fun funnelStep(funnelStep: String): Builder = apply { this.funnelStep = funnelStep }
 
         /**
          * Sets product price
          * @param productPrice A price to override the original value in the conversion product object.
          */
-        fun productPrice(productPrice: Double?) = apply { this.productPrice = productPrice }
+        public fun productPrice(productPrice: Double?): Builder = apply { this.productPrice = productPrice }
 
         /**
          * Sets renewal frequency
          * @param renewalFrequency A renewal frequency to override the original value in the conversion product object.
          */
-        fun renewalFrequency(renewalFrequency: String?) = apply { this.renewalFrequency = renewalFrequency }
+        public fun renewalFrequency(renewalFrequency: String?): Builder = apply {
+            this.renewalFrequency = renewalFrequency
+        }
 
         /**
          * Builds conversion event
          * @throws [IllegalArgumentException] if constraints failed
          */
-        fun build(): ConversionEvent {
+        public fun build(): ConversionEvent {
             check(siteId.isNotEmpty()) {
                 "Site id can't be empty"
             }
@@ -136,10 +142,10 @@ class ConversionEvent internal constructor(
         }
     }
 
-    companion object {
-        const val FUNNEL_TYPE_CONVERT_PRODUCT = "convertProduct"
-        const val FUNNEL_TYPE_TERMINATE_PRODUCT = "terminateProduct"
-        const val FUNNEL_TYPE_RENEW_PRODUCT = "renewProduct"
+    public companion object {
+        public const val FUNNEL_TYPE_CONVERT_PRODUCT: String = "convertProduct"
+        public const val FUNNEL_TYPE_TERMINATE_PRODUCT: String = "terminateProduct"
+        public const val FUNNEL_TYPE_RENEW_PRODUCT: String = "renewProduct"
         internal const val EVENT_TYPE = "conversion"
         internal const val MAX_LENGTH = 30
     }

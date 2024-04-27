@@ -8,9 +8,9 @@ package io.piano.android.cxense.model
  * @property properties Item custom properties
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-class WidgetItem(
-    val title: String?,
-    val url: String?,
-    val clickUrl: String?,
-    val properties: Map<String, Any>,
+public class WidgetItem(
+    public val title: String?,
+    public val url: String?,
+    public val clickUrl: String?,
+    public val properties: Map<String, Any>,
 )

@@ -8,9 +8,9 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class User(
+public class User(
     type: String,
     id: String,
-    @Json(name = "profile") val profiles: List<UserProfile>,
-    @Json(name = "identities") val identities: List<UserIdentity>,
+    @Json(name = "profile") public val profiles: List<UserProfile>,
+    @Json(name = "identities") public val identities: List<UserIdentity>,
 ) : UserIdentity(type, id)

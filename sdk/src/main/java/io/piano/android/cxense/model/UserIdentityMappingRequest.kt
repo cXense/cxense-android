@@ -8,8 +8,8 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class UserIdentityMappingRequest(
-    @Json(name = "cxid") val cxenseId: String,
-    @Json(name = "type") val type: String,
-    @Json(name = "id") val id: String? = null,
+public class UserIdentityMappingRequest(
+    @Json(name = "cxid") public val cxenseId: String,
+    @Json(name = "type") public val type: String,
+    @Json(name = "id") public val id: String? = null,
 )

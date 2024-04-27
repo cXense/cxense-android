@@ -10,17 +10,17 @@ import com.squareup.moshi.JsonClass
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class ContentUser() {
-    constructor(userId: String) : this() {
+public class ContentUser() {
+    public constructor(userId: String) : this() {
         ids[USI_ID] = userId
     }
 
-    var ids: MutableMap<String, String> = mutableMapOf()
+    public var ids: MutableMap<String, String> = mutableMapOf()
         internal set
-    var likes: UserPreference? = null
-    var dislikes: UserPreference? = null
+    public var likes: UserPreference? = null
+    public var dislikes: UserPreference? = null
 
-    companion object {
-        const val USI_ID = "usi"
+    private companion object {
+        private const val USI_ID = "usi"
     }
 }

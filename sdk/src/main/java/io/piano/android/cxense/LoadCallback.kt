@@ -5,18 +5,18 @@ package io.piano.android.cxense
  *
  * @param <T> success data type
  */
-interface LoadCallback<in T : Any> {
+public interface LoadCallback<in T : Any> {
     /**
      * Called when load has completed successfully.
      *
      * @param data result data
      */
-    fun onSuccess(data: T)
+    public fun onSuccess(data: T)
 
     /**
      * Called when load has completed with error.
      *
      * @param throwable error
      */
-    fun onError(throwable: Throwable)
+    public fun onError(throwable: Throwable)
 }

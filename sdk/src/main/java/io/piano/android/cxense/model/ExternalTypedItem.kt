@@ -12,9 +12,9 @@ import com.squareup.moshi.JsonClass
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class ExternalTypedItem internal constructor(
-    @Json(name = "group") val group: String,
-    @Json(name = "item") val item: TypedItem,
+public class ExternalTypedItem internal constructor(
+    @Json(name = "group") public val group: String,
+    @Json(name = "item") public val item: TypedItem,
 ) {
     init {
         require(group.matches(GROUP_REGEXP)) {
@@ -22,13 +22,13 @@ class ExternalTypedItem internal constructor(
                 " max length is ${GROUP_NAME_MAX_LENGTH}"
         }
     }
-    companion object {
+    public companion object {
         private const val GROUP_NAME_MAX_LENGTH = 26
         private val GROUP_REGEXP = "^[a-zA-Z\\d-]{1,$GROUP_NAME_MAX_LENGTH}$".toRegex()
 
         @JvmName("create")
         @JvmStatic
-        operator fun invoke(group: String, item: TypedItem): ExternalTypedItem {
+        public operator fun invoke(group: String, item: TypedItem): ExternalTypedItem {
             require(item != TypedItem.Unknown)
             return ExternalTypedItem(group, item)
         }

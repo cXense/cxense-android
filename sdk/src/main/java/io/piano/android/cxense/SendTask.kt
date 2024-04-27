@@ -9,7 +9,7 @@ import timber.log.Timber
  * Runnable, which sends all events from local database to server
  *
  */
-class SendTask(
+internal class SendTask(
     private val cxApi: CxApi,
     private val eventRepository: EventRepository,
     private val configuration: CxenseConfiguration,

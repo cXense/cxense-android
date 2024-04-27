@@ -8,6 +8,6 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class TypedSegmentsResponse(
-    @Json(name = "segments") val segments: List<Segment> = emptyList(),
+public class TypedSegmentsResponse(
+    @Json(name = "segments") public val segments: List<Segment> = emptyList(),
 )

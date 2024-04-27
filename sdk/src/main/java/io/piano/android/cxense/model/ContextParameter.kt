@@ -9,7 +9,7 @@ import com.squareup.moshi.JsonClass
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class ContextParameter(
-    val key: String,
-    val value: String,
+public class ContextParameter(
+    public val key: String,
+    public val value: String,
 )

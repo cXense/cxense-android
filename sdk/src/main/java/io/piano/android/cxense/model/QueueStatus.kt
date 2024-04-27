@@ -6,9 +6,9 @@ package io.piano.android.cxense.model
  * @property notSentEvents statuses for not sent events
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-class QueueStatus(
+public class QueueStatus(
     eventStatuses: List<EventStatus>,
 ) {
-    val sentEvents: List<EventStatus> = eventStatuses.filter { it.isSent }
-    val notSentEvents: List<EventStatus> = eventStatuses.filterNot { it.isSent }
+    public val sentEvents: List<EventStatus> = eventStatuses.filter { it.isSent }
+    public val notSentEvents: List<EventStatus> = eventStatuses.filterNot { it.isSent }
 }

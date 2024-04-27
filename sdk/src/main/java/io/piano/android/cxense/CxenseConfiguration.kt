@@ -15,32 +15,32 @@ import kotlin.properties.Delegates
  * @property consentSettings Current consent settings for user.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-class CxenseConfiguration {
-    var autoMetaInfoTrackingEnabled: Boolean = true
-    var dispatchPeriod: Long by Delegates.observable(DEFAULT_DISPATCH_PERIOD) { _, oldValue, newValue ->
+public class CxenseConfiguration {
+    public var autoMetaInfoTrackingEnabled: Boolean = true
+    public var dispatchPeriod: Long by Delegates.observable(DEFAULT_DISPATCH_PERIOD) { _, oldValue, newValue ->
         if (oldValue != newValue) {
             dispatchPeriodListener?.invoke(newValue)
         }
     }
         private set
 
-    var minimumNetworkStatus: NetworkStatus = NetworkStatus.NONE
-    var outdatePeriod: Long = DEFAULT_OUTDATED_PERIOD
+    public var minimumNetworkStatus: NetworkStatus = NetworkStatus.NONE
+    public var outdatePeriod: Long = DEFAULT_OUTDATED_PERIOD
         private set
-    var credentialsProvider: CredentialsProvider = object : CredentialsProvider {
+    public var credentialsProvider: CredentialsProvider = object : CredentialsProvider {
         override fun getUsername(): String = ""
         override fun getApiKey(): String = ""
         override fun getDmpPushPersistentId(): String = ""
     }
 
-    var consentSettings = ConsentSettings()
-    var eventsMergePeriod: Long = 0
+    public var consentSettings: ConsentSettings = ConsentSettings()
+    public var eventsMergePeriod: Long = 0
         private set
-    var sendEventsAtPush = false
+    public var sendEventsAtPush: Boolean = false
 
     internal var dispatchPeriodListener: ((Long) -> Unit)? = null
 
-    var randomIdProvider: (Long) -> String = { "$it${(Math.random() * 10E8).toInt()}" }
+    public var randomIdProvider: (Long) -> String = { "$it${(Math.random() * 10E8).toInt()}" }
 
     /**
      * Sets dispatch period for the dispatcher. The dispatcher will check for events to dispatch
@@ -50,7 +50,7 @@ class CxenseConfiguration {
      * @param unit the time unit of the period parameter
      * @throws IllegalArgumentException if period smaller then CxenseConstants.MIN_DISPATCH_PERIOD
      */
-    fun dispatchPeriod(period: Long, unit: TimeUnit) {
+    public fun dispatchPeriod(period: Long, unit: TimeUnit) {
         val millis = unit.toMillis(period)
         require(millis >= MIN_DISPATCH_PERIOD) {
             "Period must be greater than $MIN_DISPATCH_PERIOD_SECONDS seconds"
@@ -65,7 +65,7 @@ class CxenseConfiguration {
      * @param unit the time unit of the period parameter
      * @throws IllegalArgumentException if period smaller than CxenseConstants.MIN_DISPATCH_PERIOD
      */
-    fun outdatePeriod(period: Long, unit: TimeUnit) {
+    public fun outdatePeriod(period: Long, unit: TimeUnit) {
         val millis = unit.toMillis(period)
         require(millis >= MIN_OUTDATE_PERIOD) {
             "Period must be greater than $MIN_OUTDATE_PERIOD_SECONDS seconds"
@@ -73,7 +73,7 @@ class CxenseConfiguration {
         outdatePeriod = millis
     }
 
-    fun eventsMergePeriod(period: Long, unit: TimeUnit) {
+    public fun eventsMergePeriod(period: Long, unit: TimeUnit) {
         val millis = unit.toMillis(period)
         require(millis >= 0) {
             "Period must be greater than 0"
@@ -84,7 +84,7 @@ class CxenseConfiguration {
     /**
      * Network statuses ordered by connection capability.
      */
-    enum class NetworkStatus {
+    public enum class NetworkStatus {
         /**
          * No network.
          */

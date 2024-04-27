@@ -10,7 +10,7 @@ import java.io.IOException
 /**
  * Error parser
  */
-class ApiErrorParser(
+internal class ApiErrorParser(
     private val converter: Converter<ResponseBody, ApiError>,
 ) {
     fun parseError(response: Response<*>): BaseException? {

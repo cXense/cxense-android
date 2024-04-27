@@ -4,58 +4,58 @@ package io.piano.android.cxense
  * Base class for SDK exceptions
  *
  */
-open class BaseException : RuntimeException {
-    constructor() : super()
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public open class BaseException : RuntimeException {
+    public constructor() : super()
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
 
 /**
  * Exception that is thrown when `consent required` flag was set, but user doesn't provide consent
  */
-class ConsentRequiredException : BaseException {
-    constructor() : super("Required user consent wasn't provided.")
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public class ConsentRequiredException : BaseException {
+    public constructor() : super("Required user consent wasn't provided.")
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
 
 /**
  * Exception that is thrown for HTTP 400 Bad Request responses
  *
  */
-class BadRequestException : BaseException {
-    constructor() : super("Request failed! Please make sure that all the request parameters are valid.")
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+public class BadRequestException : BaseException {
+    public constructor() : super("Request failed! Please make sure that all the request parameters are valid.")
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
 
 /**
  * Exception that is thrown for HTTP 403 Forbidden responses
  *
  */
-class ForbiddenException : BaseException {
-    constructor() : super(
+public class ForbiddenException : BaseException {
+    public constructor() : super(
         "Request failed! Please make sure that all the request parameters are valid and uses authorized values."
     )
 
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }
 
 /**
  * Exception that is thrown for HTTP 401 Not Authorized responses
  *
  */
-class NotAuthorizedException : BaseException {
-    constructor() : super(
+public class NotAuthorizedException : BaseException {
+    public constructor() : super(
         "Request failed! Please make sure that all the request parameters are valid and uses authorized values."
     )
 
-    constructor(message: String?) : super(message)
-    constructor(message: String?, cause: Throwable?) : super(message, cause)
-    constructor(cause: Throwable?) : super(cause)
+    public constructor(message: String?) : super(message)
+    public constructor(message: String?, cause: Throwable?) : super(message, cause)
+    public constructor(cause: Throwable?) : super(cause)
 }

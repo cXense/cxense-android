@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
  * Supports [PageViewEvent] to [EventRecord] converting
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class PageViewEventConverter(
+internal class PageViewEventConverter(
     private val mapAdapter: JsonAdapter<Map<String, String>>,
     private val configuration: CxenseConfiguration,
     private val deviceInfoProvider: DeviceInfoProvider,

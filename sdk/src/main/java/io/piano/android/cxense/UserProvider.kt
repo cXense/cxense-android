@@ -8,7 +8,7 @@ import java.util.UUID
  * Provides user id and content user
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class UserProvider(
+internal class UserProvider(
     private val advertisingIdProvider: AdvertisingIdProvider,
     private val prefsStorage: PrefsStorage,
 ) {

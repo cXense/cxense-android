@@ -12,11 +12,11 @@ import okio.Buffer
 
 @Retention(AnnotationRetention.RUNTIME)
 @JsonQualifier
-annotation class IntString
+internal annotation class IntString
 
 @Retention(AnnotationRetention.RUNTIME)
 @JsonQualifier
-annotation class DoubleString
+internal annotation class DoubleString
 
 internal object IntStringAdapter {
     @FromJson
@@ -36,7 +36,7 @@ internal object DoubleStringAdapter {
     fun toJson(@DoubleString value: Double): String = "%.2f".format(value)
 }
 
-class EventsRequestAdapter : JsonAdapter<EventDataRequest>() {
+internal class EventsRequestAdapter : JsonAdapter<EventDataRequest>() {
     override fun toJson(writer: JsonWriter, value: EventDataRequest?) {
         requireNotNull(value)
         writer.beginObject()
@@ -56,7 +56,7 @@ class EventsRequestAdapter : JsonAdapter<EventDataRequest>() {
     }
 }
 
-object WidgetItemAdapter {
+internal object WidgetItemAdapter {
     @FromJson
     fun fromJson(props: Map<String, Any>): WidgetItem = WidgetItem(
         props[TITLE]?.toString(),

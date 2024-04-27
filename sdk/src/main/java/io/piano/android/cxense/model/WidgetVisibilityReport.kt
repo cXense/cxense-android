@@ -8,6 +8,6 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class WidgetVisibilityReport(
-    @Json(name = "impressions") val impressions: List<Impression>,
+public class WidgetVisibilityReport(
+    @Json(name = "impressions") public val impressions: List<Impression>,
 )

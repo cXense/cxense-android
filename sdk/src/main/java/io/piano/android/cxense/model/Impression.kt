@@ -13,19 +13,19 @@ import com.squareup.moshi.JsonClass
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class Impression(
+public class Impression(
     clickUrl: String,
     seconds: Int,
 ) {
     @Json(name = "clickUrl")
-    val clickUrl: String = clickUrl.also {
+    public val clickUrl: String = clickUrl.also {
         require(it.isNotEmpty()) {
             "clickUrl should be filled"
         }
     }
 
     @Json(name = "visibilitySeconds")
-    val seconds: Int = seconds.also {
+    public val seconds: Int = seconds.also {
         require(it > 0) {
             "Seconds value should be more than 0"
         }

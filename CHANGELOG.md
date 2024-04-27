@@ -1,5 +1,17 @@
 # Piano DMP & Content SDK for Android
 
+## v2.6.0-SNAPSHOT
+* Updated to Kotlin 1.9
+* Updated dependencies:
+    - Kotlin [1.8.22 -> 1.9.23]
+      https://kotlinlang.org/
+    - com.squareup.moshi:moshi [1.15.0 -> 1.15.1]
+      https://github.com/square/moshi/
+    - com.squareup.okhttp3:okhttp [4.11.0 -> 4.12.0]
+      https://square.github.io/okhttp/
+    - com.squareup.retrofit2:retrofit [2.9.0 -> 2.11.0]
+      https://github.com/square/retrofit
+
 ## v2.5.1
 * Add storing for `fallback user id`
 * Updated dependencies:
@@ -14,7 +26,7 @@
 * Add support for `typed` external items for user data
 * Add Kotlin coroutine suspend support for API
 * Updated dependencies:
-    - Kotlin [1.7.22 -> 1.8.21]
+    - Kotlin [1.7.22 -> 1.8.22]
       https://kotlinlang.org/
     - com.squareup.moshi:moshi [1.14.0 -> 1.15.0]
       https://github.com/square/moshi/

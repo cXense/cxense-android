@@ -6,9 +6,9 @@ import com.squareup.moshi.JsonClass
  * Candidate segments to consider at retrieving a list of all segments where the user is a member.
  */
 @JsonClass(generateAdapter = true)
-class CandidateSegment(
-    val id: String,
-    val type: SegmentType,
+public class CandidateSegment(
+    public val id: String,
+    public val type: SegmentType,
 ) {
     init {
         require(id.isNotEmpty()) {

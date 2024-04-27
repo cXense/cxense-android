@@ -26,7 +26,7 @@ import retrofit2.http.Query
 import retrofit2.http.QueryMap
 import retrofit2.http.Url
 
-interface CxApi {
+internal interface CxApi {
     @Authorized
     @POST(ENDPOINT_USER_SEGMENTS)
     fun getUserTypedSegments(@Body request: UserSegmentRequest): Call<TypedSegmentsResponse>

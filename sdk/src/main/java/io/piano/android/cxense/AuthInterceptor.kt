@@ -14,7 +14,7 @@ import javax.crypto.spec.SecretKeySpec
 /**
  * Interceptor for adding `X-cXense-Authentication` auth header.
  */
-class AuthInterceptor(
+internal class AuthInterceptor(
     private val cxenseConfiguration: CxenseConfiguration,
 ) : Interceptor {
     internal val dateString: String

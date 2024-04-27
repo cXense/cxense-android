@@ -7,8 +7,8 @@ package io.piano.android.cxense.model
  * @property exception exception thrown at sending
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-class EventStatus(
-    val eventId: String?,
-    val isSent: Boolean,
-    val exception: Exception? = null,
+public class EventStatus(
+    public val eventId: String?,
+    public val isSent: Boolean,
+    public val exception: Exception? = null,
 )

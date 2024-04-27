@@ -8,7 +8,7 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class UserProfile(
-    @Json(name = "item") val item: String?,
-    @Json(name = "groups") val groups: List<UserProfileGroup>?,
+public class UserProfile(
+    @Json(name = "item") public val item: String?,
+    @Json(name = "groups") public val groups: List<UserProfileGroup>?,
 )

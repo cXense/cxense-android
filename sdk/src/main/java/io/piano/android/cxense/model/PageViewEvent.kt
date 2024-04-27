@@ -25,23 +25,23 @@ import java.util.Objects
  * @property externalUserIds External user ids.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-class PageViewEvent private constructor(
+public class PageViewEvent private constructor(
     eventId: String?,
-    val userId: String,
-    val siteId: String,
-    val location: String?,
-    val contentId: String?,
-    val referrer: String?,
-    val accountId: Int?,
-    val pageName: String?,
-    val newUser: Boolean?,
-    val customParameters: MutableList<CustomParameter>,
-    val customUserParameters: MutableList<CustomParameter>,
-    val externalUserIds: MutableList<ExternalUserId>,
-    val time: Long,
-    val rnd: String,
+    public val userId: String,
+    public val siteId: String,
+    public val location: String?,
+    public val contentId: String?,
+    public val referrer: String?,
+    public val accountId: Int?,
+    public val pageName: String?,
+    public val newUser: Boolean?,
+    public val customParameters: MutableList<CustomParameter>,
+    public val customUserParameters: MutableList<CustomParameter>,
+    public val externalUserIds: MutableList<ExternalUserId>,
+    public val time: Long,
+    public val rnd: String,
 ) : Event(eventId) {
-    val eventType = EVENT_TYPE
+    public val eventType: String = EVENT_TYPE
     override val mergeKey = Objects.hash(eventType, siteId, location, contentId, referrer)
 
     /**
@@ -58,8 +58,8 @@ class PageViewEvent private constructor(
      * @property customUserParameters custom user profile parameters.
      * @property externalUserIds external user ids.
      */
-    data class Builder internal constructor(
-        val userProvider: UserProvider,
+    public data class Builder internal constructor(
+        private val userProvider: UserProvider,
         var siteId: String,
         var location: String? = null,
         var contentId: String? = null,
@@ -76,7 +76,7 @@ class PageViewEvent private constructor(
          * Initialize Builder with required parameters
          */
         @JvmOverloads
-        constructor(
+        public constructor(
             siteId: String,
             location: String? = null,
             contentId: String? = null,
@@ -107,76 +107,76 @@ class PageViewEvent private constructor(
          * Sets site identifier.
          * @param siteId the Cxense site identifier.
          */
-        fun siteId(siteId: String) = apply { this.siteId = siteId }
+        public fun siteId(siteId: String): Builder = apply { this.siteId = siteId }
 
         /**
          * Sets location URL
          * @param location Sets the URL of the page. Must be a syntactically valid URL, or else the event will be dropped.
          */
-        fun location(location: String?) = apply { this.location = location }
+        public fun location(location: String?): Builder = apply { this.location = location }
 
         /**
          * Sets content id
          * @param contentId Sets content id for URL-less mode. Forces to ignore page location value.
          */
-        fun contentId(contentId: String?) = apply { this.contentId = contentId }
+        public fun contentId(contentId: String?): Builder = apply { this.contentId = contentId }
 
         /**
          * Sets referrer URL
          * @param referrer Sets the URL of the referring page. Must be a syntactically valid URL
          */
-        fun referrer(referrer: String?) = apply { this.referrer = referrer }
+        public fun referrer(referrer: String?): Builder = apply { this.referrer = referrer }
 
         /**
          * Sets custom event id
          * @param eventId custom event id, that used for tracking locally.
          */
-        fun eventId(eventId: String?) = apply { this.eventId = eventId }
+        public fun eventId(eventId: String?): Builder = apply { this.eventId = eventId }
 
         /**
          * Sets account identifier.
          * @param accountId the Cxense account identifier.
          */
-        fun accountId(accountId: Int?) = apply { this.accountId = accountId }
+        public fun accountId(accountId: Int?): Builder = apply { this.accountId = accountId }
 
         /**
          * Sets the page name.
          * @param pageName the page name.
          */
-        fun pageName(pageName: String?) = apply { this.pageName = pageName }
+        public fun pageName(pageName: String?): Builder = apply { this.pageName = pageName }
 
         /**
          * Sets new user flag.
          * @param newUser hint to indicate if this looks like a new user.
          */
-        fun newUser(newUser: Boolean?) = apply { this.newUser = newUser }
+        public fun newUser(newUser: Boolean?): Builder = apply { this.newUser = newUser }
 
         /**
          * Add custom parameters.
          * @param customParameters one or many [CustomParameter] objects
          */
-        fun addCustomParameters(vararg customParameters: CustomParameter) =
+        public fun addCustomParameters(vararg customParameters: CustomParameter): Builder =
             apply { this.customParameters.addAll(customParameters) }
 
         /**
          * Add custom parameters.
          * @param customParameters [Iterable] with [CustomParameter] objects
          */
-        fun addCustomParameters(customParameters: Iterable<CustomParameter>) =
+        public fun addCustomParameters(customParameters: Iterable<CustomParameter>): Builder =
             apply { this.customParameters.addAll(customParameters) }
 
         /**
          * Add custom user profile parameters.
          * @param customUserParameters one or many [CustomParameter] objects
          */
-        fun addCustomUserParameters(vararg customUserParameters: CustomParameter) =
+        public fun addCustomUserParameters(vararg customUserParameters: CustomParameter): Builder =
             apply { this.customUserParameters.addAll(customUserParameters) }
 
         /**
          * Add custom user profile parameters.
          * @param customUserParameters [Iterable] with [CustomParameter] objects
          */
-        fun addCustomUserParameters(customUserParameters: Iterable<CustomParameter>) =
+        public fun addCustomUserParameters(customUserParameters: Iterable<CustomParameter>): Builder =
             apply { this.customUserParameters.addAll(customUserParameters) }
 
         /**
@@ -184,7 +184,7 @@ class PageViewEvent private constructor(
          * You can add a maximum of [MAX_EXTERNAL_USER_IDS] external user ids, if you add more, then last will be used.
          * @param externalUserIds one or many [ExternalUserId] objects
          */
-        fun addExternalUserIds(vararg externalUserIds: ExternalUserId) =
+        public fun addExternalUserIds(vararg externalUserIds: ExternalUserId): Builder =
             apply { this.externalUserIds.addAll(externalUserIds) }
 
         /**
@@ -192,14 +192,14 @@ class PageViewEvent private constructor(
          * You can add a maximum of [MAX_EXTERNAL_USER_IDS] external user ids, if you add more, then last will be used.
          * @param externalUserIds [Iterable] with [ExternalUserId] objects
          */
-        fun addExternalUserIds(externalUserIds: Iterable<ExternalUserId>) =
+        public fun addExternalUserIds(externalUserIds: Iterable<ExternalUserId>): Builder =
             apply { this.externalUserIds.addAll(externalUserIds) }
 
         /**
          * Builds page view event
          * @throws [IllegalArgumentException] if constraints failed
          */
-        fun build(): PageViewEvent {
+        public fun build(): PageViewEvent {
             check(location != null || contentId != null) {
                 "You should specify page location or content id"
             }
@@ -242,8 +242,8 @@ class PageViewEvent private constructor(
         }
     }
 
-    companion object {
-        const val EVENT_TYPE = "pgv"
-        const val MAX_EXTERNAL_USER_IDS = 5
+    public companion object {
+        internal const val EVENT_TYPE = "pgv"
+        public const val MAX_EXTERNAL_USER_IDS: Int = 5
     }
 }

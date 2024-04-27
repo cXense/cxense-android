@@ -4,6 +4,6 @@ package io.piano.android.cxense.model
  * Request object for pushing events to server.
  *
  */
-class EventDataRequest(
+internal class EventDataRequest(
     val events: List<String>,
 )

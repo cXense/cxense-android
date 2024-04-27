@@ -8,6 +8,6 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class ApiError(
+internal class ApiError(
     @Json(name = "error") val error: String? = null,
 )
