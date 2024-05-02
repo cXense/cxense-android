@@ -10,7 +10,7 @@ import io.piano.android.cxense.model.Event
  * Supports [ConversionEvent] to [EventRecord] converting
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class ConversionEventConverter(
+internal class ConversionEventConverter(
     private val jsonAdapter: JsonAdapter<ConversionEvent>,
 ) : EventConverter() {
     override fun canConvert(event: Event): Boolean = event is ConversionEvent

@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
  * Supports [PerformanceEvent] to [EventRecord] converting
  */
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class PerformanceEventConverter(
+internal class PerformanceEventConverter(
     private val jsonAdapter: JsonAdapter<PerformanceEvent>,
 ) : EventConverter() {
     override fun canConvert(event: Event): Boolean = event is PerformanceEvent

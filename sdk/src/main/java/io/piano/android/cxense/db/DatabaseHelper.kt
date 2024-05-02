@@ -9,7 +9,7 @@ import android.provider.BaseColumns
 import androidx.annotation.RestrictTo
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class DatabaseHelper(
+internal class DatabaseHelper(
     context: Context,
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 

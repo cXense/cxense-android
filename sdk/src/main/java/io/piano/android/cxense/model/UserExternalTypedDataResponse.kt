@@ -8,6 +8,6 @@ import com.squareup.moshi.JsonClass
  *
  */
 @JsonClass(generateAdapter = true)
-class UserExternalTypedDataResponse(
-    @Json(name = "data") val items: List<UserExternalTypedData> = emptyList(),
+public class UserExternalTypedDataResponse(
+    @Json(name = "data") public val items: List<UserExternalTypedData> = emptyList(),
 )

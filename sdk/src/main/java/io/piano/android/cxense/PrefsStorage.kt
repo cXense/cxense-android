@@ -5,7 +5,7 @@ import android.content.SharedPreferences
 import androidx.annotation.RestrictTo
 
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-class PrefsStorage(context: Context) {
+internal class PrefsStorage(context: Context) {
     private val prefs: SharedPreferences = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
 
     var defaultUserId: String?

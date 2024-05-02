@@ -24,18 +24,18 @@ import java.util.concurrent.TimeUnit
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class PerformanceEvent internal constructor(
+public class PerformanceEvent internal constructor(
     eventId: String? = null,
-    @Json(name = USER_IDS) val identities: List<UserIdentity>,
-    @Json(name = SITE_ID) val siteId: String,
-    @Json(name = ORIGIN) val origin: String,
-    @Json(name = TYPE) val eventType: String,
-    @Json(name = PRND) val prnd: String?,
-    @Json(name = TIME) val time: Long,
-    @Json(name = SEGMENT_IDS) val segments: List<String>?,
-    @Json(name = CUSTOM_PARAMETERS) val customParameters: List<CustomParameter>,
-    @Json(name = "consent") val consentOptions: List<String>,
-    @Json(name = RND) val rnd: String,
+    @Json(name = USER_IDS) public val identities: List<UserIdentity>,
+    @Json(name = SITE_ID) public val siteId: String,
+    @Json(name = ORIGIN) public val origin: String,
+    @Json(name = TYPE) public val eventType: String,
+    @Json(name = PRND) public val prnd: String?,
+    @Json(name = TIME) public val time: Long,
+    @Json(name = SEGMENT_IDS) public val segments: List<String>?,
+    @Json(name = CUSTOM_PARAMETERS) public val customParameters: List<CustomParameter>,
+    @Json(name = "consent") public val consentOptions: List<String>,
+    @Json(name = RND) public val rnd: String,
 ) : Event(eventId) {
     override val mergeKey = Objects.hash(eventType, origin)
 
@@ -52,8 +52,8 @@ class PerformanceEvent internal constructor(
      * @property segments optional collection of matching segments to be reported.
      * @property customParameters optional collection of customer-defined parameters to event.
      */
-    data class Builder internal constructor(
-        val userProvider: UserProvider,
+    public data class Builder internal constructor(
+        private val userProvider: UserProvider,
         var siteId: String,
         var origin: String,
         var eventType: String,
@@ -66,7 +66,7 @@ class PerformanceEvent internal constructor(
     ) {
 
         @JvmOverloads
-        constructor(
+        public constructor(
             siteId: String,
             origin: String,
             eventType: String,
@@ -93,88 +93,92 @@ class PerformanceEvent internal constructor(
          * Adds known user identities to identify the user.
          * @param identities one or many [UserIdentity] objects
          */
-        fun addIdentities(vararg identities: UserIdentity) = apply { this.identities.addAll(identities) }
+        public fun addIdentities(vararg identities: UserIdentity): Builder = apply {
+            this.identities.addAll(identities)
+        }
 
         /**
          * Adds known user identities to identify the user.
          * @param identities [Iterable] with [UserIdentity] objects
          */
-        fun addIdentities(identities: Iterable<UserIdentity>) = apply { this.identities.addAll(identities) }
+        public fun addIdentities(identities: Iterable<UserIdentity>): Builder = apply {
+            this.identities.addAll(identities)
+        }
 
         /**
          * Sets site identifier
          * @param siteId The analytics site identifier to be associated with the events.
          */
-        fun siteId(siteId: String) = apply { this.siteId = siteId }
+        public fun siteId(siteId: String): Builder = apply { this.siteId = siteId }
 
         /**
          * Sets event origin
          * @param origin Differentiates various DMP applications used by the customer. Must be prefixed by the customer prefix.
          */
-        fun origin(origin: String) = apply { this.origin = origin }
+        public fun origin(origin: String): Builder = apply { this.origin = origin }
 
         /**
          * Sets event type
          * @param type Differentiates various event types, e.g., "click", "impression", "conversion", etc.
          */
-        fun eventType(type: String) = apply { this.eventType = type }
+        public fun eventType(type: String): Builder = apply { this.eventType = type }
 
         /**
          * Sets custom event id
          * @param eventId custom event id, that used for tracking locally.
          */
-        fun eventId(eventId: String?) = apply { this.eventId = eventId }
+        public fun eventId(eventId: String?): Builder = apply { this.eventId = eventId }
 
         /**
          * Sets page view event id
          * @param prnd an alternative specification for page view event id. In order to link DMP events to page views this value
          */
-        fun prnd(prnd: String?) = apply { this.prnd = prnd }
+        public fun prnd(prnd: String?): Builder = apply { this.prnd = prnd }
 
         /**
          * Sets current datetime as datetime of an event
          */
-        fun currentTime() = apply { this.time = System.currentTimeMillis() }
+        public fun currentTime(): Builder = apply { this.time = System.currentTimeMillis() }
 
         /**
          * Sets datetime of an event
          * @param date the exact datetime of an event
          */
-        fun time(date: Date) = apply { this.time = date.time }
+        public fun time(date: Date): Builder = apply { this.time = date.time }
 
         /**
          * Adds matching segments to be reported.
          * @param segments one or many segment ids
          */
         @Deprecated("Deprecated at backend")
-        fun addSegments(vararg segments: String) = apply { this.segments.addAll(segments) }
+        public fun addSegments(vararg segments: String): Builder = apply { this.segments.addAll(segments) }
 
         /**
          * Adds matching segments to be reported.
          * @param segments [Iterable] with segment ids
          */
         @Deprecated("Deprecated at backend")
-        fun addSegments(segments: Iterable<String>) = apply { this.segments.addAll(segments) }
+        public fun addSegments(segments: Iterable<String>): Builder = apply { this.segments.addAll(segments) }
 
         /**
          * Adds custom parameters.
          * @param customParameters one or many [CustomParameter] objects
          */
-        fun addCustomParameters(vararg customParameters: CustomParameter) =
+        public fun addCustomParameters(vararg customParameters: CustomParameter): Builder =
             apply { this.customParameters.addAll(customParameters) }
 
         /**
          * Adds custom parameters.
          * @param customParameters [Iterable] with [CustomParameter] objects
          */
-        fun addCustomParameters(customParameters: Iterable<CustomParameter>) =
+        public fun addCustomParameters(customParameters: Iterable<CustomParameter>): Builder =
             apply { this.customParameters.addAll(customParameters) }
 
         /**
          * Builds performance event
          * @throws [IllegalArgumentException] if constraints failed
          */
-        fun build(): PerformanceEvent {
+        public fun build(): PerformanceEvent {
             check(siteId.isNotEmpty()) {
                 "Site id can't be empty"
             }
@@ -209,16 +213,16 @@ class PerformanceEvent internal constructor(
         }
     }
 
-    companion object {
-        const val ORIGIN_REGEX = "\\w{3}-[\\w-]+"
-        const val TIME = "time"
-        const val USER_IDS = "userIds"
-        const val PRND = "prnd"
-        const val RND = "rnd"
-        const val SITE_ID = "siteId"
-        const val ORIGIN = "origin"
-        const val TYPE = "type"
-        const val SEGMENT_IDS = "segmentIds"
-        const val CUSTOM_PARAMETERS = "customParameters"
+    internal companion object {
+        internal const val ORIGIN_REGEX = "\\w{3}-[\\w-]+"
+        internal const val TIME = "time"
+        internal const val USER_IDS = "userIds"
+        internal const val PRND = "prnd"
+        internal const val RND = "rnd"
+        internal const val SITE_ID = "siteId"
+        internal const val ORIGIN = "origin"
+        internal const val TYPE = "type"
+        internal const val SEGMENT_IDS = "segmentIds"
+        internal const val CUSTOM_PARAMETERS = "customParameters"
     }
 }

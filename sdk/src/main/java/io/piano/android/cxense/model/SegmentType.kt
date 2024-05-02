@@ -4,7 +4,7 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = false)
-enum class SegmentType {
+public enum class SegmentType {
     @Json(name = "traffic")
     TRAFFIC,
 

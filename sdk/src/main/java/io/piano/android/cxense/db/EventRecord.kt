@@ -9,7 +9,7 @@ import androidx.annotation.RestrictTo
  *
  **/
 @RestrictTo(RestrictTo.Scope.LIBRARY)
-data class EventRecord(
+internal data class EventRecord(
     val eventType: String,
     val customId: String?,
     val data: String,

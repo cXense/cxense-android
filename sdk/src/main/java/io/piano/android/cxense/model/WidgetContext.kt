@@ -18,16 +18,16 @@ import java.util.Collections
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class WidgetContext internal constructor(
-    val url: String,
-    val referrer: String?,
-    val pageclass: String?,
-    val sentiment: String?,
-    val recommending: Boolean?,
-    val categories: MutableMap<String, String>,
-    val keywords: MutableList<String>,
-    val neighbors: MutableList<String>,
-    val parameters: MutableList<ContextParameter>,
+public class WidgetContext internal constructor(
+    public val url: String,
+    public val referrer: String?,
+    public val pageclass: String?,
+    public val sentiment: String?,
+    public val recommending: Boolean?,
+    public val categories: MutableMap<String, String>,
+    public val keywords: MutableList<String>,
+    public val neighbors: MutableList<String>,
+    public val parameters: MutableList<ContextParameter>,
 ) {
     /**
      * @constructor Initialize builder for [WidgetContext]
@@ -41,7 +41,7 @@ class WidgetContext internal constructor(
      * @property neighbors list of linked articles IDs.
      * @property parameters list of [ContextParameter] objects.
      */
-    data class Builder @JvmOverloads constructor(
+    public data class Builder @JvmOverloads constructor(
         var url: String,
         var referrer: String? = null,
         var pageclass: String? = null,
@@ -56,61 +56,63 @@ class WidgetContext internal constructor(
          * Sets url
          * @param url url for widget.
          */
-        fun url(url: String) = apply { this.url = url }
+        public fun url(url: String): Builder = apply { this.url = url }
 
         /**
          * Sets referrer
          * @param referrer referrer url.
          */
-        fun referrer(referrer: String?) = apply { this.referrer = referrer }
+        public fun referrer(referrer: String?): Builder = apply { this.referrer = referrer }
 
         /**
          * Sets pageclass
          * @param pageclass the pageclass of the current page.
          */
-        fun pageclass(pageclass: String?) = apply { this.pageclass = pageclass }
+        public fun pageclass(pageclass: String?): Builder = apply { this.pageclass = pageclass }
 
         /**
          * Sets sentiment
          * @param sentiment the sentiment of the current page.
          */
-        fun sentiment(sentiment: String?) = apply { this.sentiment = sentiment }
+        public fun sentiment(sentiment: String?): Builder = apply { this.sentiment = sentiment }
 
         /**
          * Sets recommending flag
          * @param recommending recs-recommending setting of the current page.
          */
-        fun recommending(recommending: Boolean?) = apply { this.recommending = recommending }
+        public fun recommending(recommending: Boolean?): Builder = apply { this.recommending = recommending }
 
         /**
          * Sets categories
          * @param categories map for categories of the current page.
          */
-        fun categories(categories: MutableMap<String, String>) = apply { this.categories = categories }
+        public fun categories(categories: MutableMap<String, String>): Builder = apply { this.categories = categories }
 
         /**
          * Sets keywords
          * @param keywords list of keywords describing the context.
          */
-        fun keywords(keywords: MutableList<String>) = apply { this.keywords = keywords }
+        public fun keywords(keywords: MutableList<String>): Builder = apply { this.keywords = keywords }
 
         /**
          * Sets neighbors
          * @param neighbors list of linked articles IDs.
          */
-        fun neighbors(neighbors: MutableList<String>) = apply { this.neighbors = neighbors }
+        public fun neighbors(neighbors: MutableList<String>): Builder = apply { this.neighbors = neighbors }
 
         /**
          * Sets parameters
          * @param parameters list of [ContextParameter] objects.
          */
-        fun parameters(parameters: MutableList<ContextParameter>) = apply { this.parameters = parameters }
+        public fun parameters(parameters: MutableList<ContextParameter>): Builder = apply {
+            this.parameters = parameters
+        }
 
         /**
          * Builds widget context
          * @throws [IllegalArgumentException] if constraints failed
          */
-        fun build(): WidgetContext {
+        public fun build(): WidgetContext {
             check(url.toHttpUrlOrNull() != null) {
                 "You should provide valid url as source"
             }

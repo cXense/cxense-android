@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit
 /**
  * Repository for saving/getting events via local database.
  */
-class EventRepository(
+internal class EventRepository(
     private val configuration: CxenseConfiguration,
     private val databaseHelper: DatabaseHelper,
     private val eventConverters: List<EventConverter>,

@@ -1,6 +1,8 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.ksp)
+    alias(libs.plugins.binaryCompatibility)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.mavenRelease)
     alias(libs.plugins.moshiIR)

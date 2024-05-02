@@ -21,7 +21,5 @@ jobs:
             cache: 'gradle'
     -   name: Grant execute permission for gradlew
         run: chmod +x gradlew
-    -   name: Upload artifacts
-        run: ./gradlew publish --no-configuration-cache
-    -   name: Close repository
-        run: ./gradlew closeAndReleaseRepository --no-configuration-cache
+    -   name: Release artifacts
+        run: ./gradlew publishAndReleaseToMavenCentral --no-configuration-cache

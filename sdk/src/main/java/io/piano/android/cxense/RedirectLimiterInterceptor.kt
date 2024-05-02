@@ -3,7 +3,7 @@ package io.piano.android.cxense
 import okhttp3.Interceptor
 import okhttp3.Response
 
-class RedirectLimiterInterceptor(
+internal class RedirectLimiterInterceptor(
     urlBlockPattern: String,
 ) : Interceptor {
     private val urlBlockRegex = urlBlockPattern.toRegex()

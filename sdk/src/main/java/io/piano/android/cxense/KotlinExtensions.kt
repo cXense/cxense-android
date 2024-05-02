@@ -17,7 +17,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.trackClick(item: WidgetItem) =
+public suspend fun CxenseSdk.trackClick(item: WidgetItem): Unit =
     suspendCancellableCoroutine { continuation ->
         trackClick(
             item,
@@ -34,7 +34,7 @@ suspend fun CxenseSdk.trackClick(item: WidgetItem) =
     }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.trackClick(url: String) =
+public suspend fun CxenseSdk.trackClick(url: String): Unit =
     suspendCancellableCoroutine { continuation ->
         trackClick(
             url,
@@ -52,14 +52,14 @@ suspend fun CxenseSdk.trackClick(url: String) =
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JvmOverloads
-suspend fun CxenseSdk.loadWidgetRecommendations(
+public suspend fun CxenseSdk.loadWidgetRecommendations(
     widgetId: String,
     widgetContext: WidgetContext? = null,
     user: ContentUser? = null,
     tag: String? = null,
     prnd: String? = null,
     experienceId: String? = null,
-) = suspendCancellableCoroutine { continuation ->
+): List<WidgetItem> = suspendCancellableCoroutine { continuation ->
     loadWidgetRecommendations(
         widgetId,
         widgetContext,
@@ -80,9 +80,9 @@ suspend fun CxenseSdk.loadWidgetRecommendations(
 }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.reportWidgetVisibilities(
+public suspend fun CxenseSdk.reportWidgetVisibilities(
     vararg impressions: Impression,
-) = suspendCancellableCoroutine { continuation ->
+): Unit = suspendCancellableCoroutine { continuation ->
     reportWidgetVisibilities(
         object : LoadCallback<Unit> {
             override fun onSuccess(data: Unit) {
@@ -98,12 +98,12 @@ suspend fun CxenseSdk.reportWidgetVisibilities(
 }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.getUserSegments(
+public suspend fun CxenseSdk.getUserSegments(
     identities: List<UserIdentity>,
     siteGroupIds: List<String>,
     candidateSegments: List<CandidateSegment>? = null,
     segmentFormat: UserSegmentRequest.SegmentFormat = UserSegmentRequest.SegmentFormat.STANDARD,
-) = suspendCancellableCoroutine { continuation ->
+): List<Segment> = suspendCancellableCoroutine { continuation ->
     getUserSegments(
         identities,
         siteGroupIds,
@@ -123,12 +123,12 @@ suspend fun CxenseSdk.getUserSegments(
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JvmOverloads
-suspend fun CxenseSdk.getUser(
+public suspend fun CxenseSdk.getUser(
     identity: UserIdentity,
     groups: List<String>? = null,
     recent: Boolean? = null,
     identityTypes: List<String>? = null,
-) = suspendCancellableCoroutine { continuation ->
+): User = suspendCancellableCoroutine { continuation ->
     getUser(
         identity,
         groups,
@@ -148,12 +148,12 @@ suspend fun CxenseSdk.getUser(
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JvmOverloads
-suspend fun CxenseSdk.getUserExternalTypedData(
+public suspend fun CxenseSdk.getUserExternalTypedData(
     type: String,
     id: String? = null,
     filter: String? = null,
     groups: List<String>? = null,
-) = suspendCancellableCoroutine { continuation ->
+): List<UserExternalTypedData> = suspendCancellableCoroutine { continuation ->
     getUserExternalTypedData(
         type,
         id,
@@ -172,9 +172,9 @@ suspend fun CxenseSdk.getUserExternalTypedData(
 }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.setUserExternalTypedData(
+public suspend fun CxenseSdk.setUserExternalTypedData(
     userExternalData: UserExternalTypedData,
-) = suspendCancellableCoroutine { continuation ->
+): Unit = suspendCancellableCoroutine { continuation ->
     setUserExternalTypedData(
         userExternalData,
         object : LoadCallback<Unit> {
@@ -190,9 +190,9 @@ suspend fun CxenseSdk.setUserExternalTypedData(
 }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.deleteUserExternalData(
+public suspend fun CxenseSdk.deleteUserExternalData(
     identity: UserIdentity,
-) = suspendCancellableCoroutine { continuation ->
+): Unit = suspendCancellableCoroutine { continuation ->
     deleteUserExternalData(
         identity,
         object : LoadCallback<Unit> {
@@ -208,10 +208,10 @@ suspend fun CxenseSdk.deleteUserExternalData(
 }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.getUserExternalLink(
+public suspend fun CxenseSdk.getUserExternalLink(
     cxenseId: String,
     type: String,
-) = suspendCancellableCoroutine { continuation ->
+): UserIdentity = suspendCancellableCoroutine { continuation ->
     getUserExternalLink(
         cxenseId,
         type,
@@ -228,10 +228,10 @@ suspend fun CxenseSdk.getUserExternalLink(
 }
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-suspend fun CxenseSdk.addUserExternalLink(
+public suspend fun CxenseSdk.addUserExternalLink(
     cxenseId: String,
     identity: UserIdentity,
-) = suspendCancellableCoroutine { continuation ->
+): UserIdentity = suspendCancellableCoroutine { continuation ->
     addUserExternalLink(
         cxenseId,
         identity,
@@ -249,11 +249,11 @@ suspend fun CxenseSdk.addUserExternalLink(
 
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JvmOverloads
-suspend inline fun <reified T : Any> CxenseSdk.executePersistedQuery(
+public suspend inline fun <reified T : Any> CxenseSdk.executePersistedQuery(
     url: String,
     persistentQueryId: String,
     data: Any? = null,
-) = suspendCancellableCoroutine { continuation ->
+): T = suspendCancellableCoroutine { continuation ->
     executePersistedQuery(
         url,
         persistentQueryId,

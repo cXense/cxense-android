@@ -10,7 +10,7 @@ import com.squareup.moshi.JsonClass
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 @JsonClass(generateAdapter = true)
-class UserPreference(
-    val categories: List<String>,
-    val boost: Double,
+public class UserPreference(
+    public val categories: List<String>,
+    public val boost: Double,
 )

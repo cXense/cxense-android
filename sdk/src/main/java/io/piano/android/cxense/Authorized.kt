@@ -5,4 +5,4 @@ package io.piano.android.cxense
  */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.RUNTIME)
-annotation class Authorized
+internal annotation class Authorized
