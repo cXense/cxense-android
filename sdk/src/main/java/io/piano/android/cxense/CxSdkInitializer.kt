@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.startup.Initializer
 
 @Suppress("unused")
-internal class CxSdkInitializer : Initializer<CxenseSdk> {
+public class CxSdkInitializer : Initializer<CxenseSdk> {
     override fun create(context: Context): CxenseSdk = DependenciesProvider.init(context).cxenseSdk
 
     override fun dependencies(): List<Class<out Initializer<*>>> = emptyList()

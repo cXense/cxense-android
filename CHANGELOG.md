@@ -1,5 +1,8 @@
 # Piano DMP & Content SDK for Android
 
+## v2.6.1
+* Fix initializer visibility
+
 ## v2.6.0
 * Updated to Kotlin 1.9
 * Updated dependencies:

@@ -36,6 +36,13 @@ public abstract interface class io/piano/android/cxense/CredentialsProvider {
 	public abstract fun getUsername ()Ljava/lang/String;
 }
 
+public final class io/piano/android/cxense/CxSdkInitializer : androidx/startup/Initializer {
+	public fun <init> ()V
+	public fun create (Landroid/content/Context;)Lio/piano/android/cxense/CxenseSdk;
+	public synthetic fun create (Landroid/content/Context;)Ljava/lang/Object;
+	public fun dependencies ()Ljava/util/List;
+}
+
 public final class io/piano/android/cxense/CxenseConfiguration {
 	public fun <init> ()V
 	public final fun dispatchPeriod (JLjava/util/concurrent/TimeUnit;)V
