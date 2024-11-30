@@ -18,7 +18,7 @@ class SdkInterceptorTest : BaseInterceptorTest() {
             .newCall(
                 Request.Builder()
                     .url(mockWebServer.url("/"))
-                    .build()
+                    .build(),
             )
             .execute()
         with(mockWebServer.takeRequest().requestUrl) {

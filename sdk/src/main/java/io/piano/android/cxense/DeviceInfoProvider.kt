@@ -43,14 +43,12 @@ internal class DeviceInfoProvider(
         context.packageManager.getApplicationLabel(context.applicationInfo).toString()
     }
 
-    private fun NetworkCapabilities.toNetworkStatus(): CxenseConfiguration.NetworkStatus {
-        return when {
-            hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
-                hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> CxenseConfiguration.NetworkStatus.WIFI
-            hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> CxenseConfiguration.NetworkStatus.MOBILE
-            hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> CxenseConfiguration.NetworkStatus.GPRS
-            else -> CxenseConfiguration.NetworkStatus.NONE
-        }
+    private fun NetworkCapabilities.toNetworkStatus(): CxenseConfiguration.NetworkStatus = when {
+        hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+            hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> CxenseConfiguration.NetworkStatus.WIFI
+        hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> CxenseConfiguration.NetworkStatus.MOBILE
+        hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> CxenseConfiguration.NetworkStatus.GPRS
+        else -> CxenseConfiguration.NetworkStatus.NONE
     }
 
     /**
@@ -94,7 +92,7 @@ internal class DeviceInfoProvider(
             TelephonyManager.NETWORK_TYPE_HSPA,
             TelephonyManager.NETWORK_TYPE_HSPAP,
             TelephonyManager.NETWORK_TYPE_HSUPA,
-            TelephonyManager.NETWORK_TYPE_LTE
+            TelephonyManager.NETWORK_TYPE_LTE,
         )
     }
 }

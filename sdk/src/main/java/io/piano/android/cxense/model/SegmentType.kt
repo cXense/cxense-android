@@ -13,4 +13,13 @@ public enum class SegmentType {
 
     @Json(name = "lookalike")
     LOOKALIKE,
+
+    @Json(name = "contextual")
+    CONTEXTUAL,
+
+    @Json(name = "combined")
+    COMBINED,
+
+    @Json(name = "unknown")
+    UNKNOWN,
 }

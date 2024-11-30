@@ -13,12 +13,11 @@ internal class SdkInterceptor(
     private val sdkVersion: String,
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response = chain.proceed(
-        chain.request()
-            .run {
-                newBuilder()
-                    .url(url.addSdkParams())
-                    .build()
-            }
+        with(chain.request()) {
+            newBuilder()
+                .url(url.addSdkParams())
+                .build()
+        },
     )
 
     private fun HttpUrl.addSdkParams() = newBuilder()

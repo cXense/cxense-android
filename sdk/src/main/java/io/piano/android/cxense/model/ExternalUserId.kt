@@ -46,9 +46,7 @@ public class ExternalUserId(
         return true
     }
 
-    override fun hashCode(): Int {
-        return userType.hashCode()
-    }
+    override fun hashCode(): Int = userType.hashCode()
 
     private companion object {
         private const val CX_USER_TYPE = "cx"

@@ -20,7 +20,7 @@ internal class ConversionEventConverter(
             ConversionEvent.EVENT_TYPE,
             eventId,
             jsonAdapter.toJson(this),
-            mergeKey = mergeKey
+            mergeKey = mergeKey,
         )
     }
 
@@ -35,8 +35,8 @@ internal class ConversionEventConverter(
                     funnelStep,
                     price ?: old.price,
                     renewalFrequency ?: old.renewalFrequency,
-                    eventType
-                )
+                    eventType,
+                ),
             )
         } ?: oldRecord
     }

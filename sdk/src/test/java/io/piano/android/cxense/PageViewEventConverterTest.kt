@@ -64,8 +64,8 @@ class PageViewEventConverterTest {
     fun extractQueryDataWithCkp() {
         whenever(jsonAdapter.fromJson(any<String>())).thenReturn(
             mutableMapOf(
-                PageViewEventConverter.CKP to "123"
-            )
+                PageViewEventConverter.CKP to "123",
+            ),
         )
         assertNotNull(converter.extractQueryData(EventRecord("type", "", "{}", mergeKey = 0), fixUserIdFunc))
         verify(jsonAdapter).fromJson(any<String>())

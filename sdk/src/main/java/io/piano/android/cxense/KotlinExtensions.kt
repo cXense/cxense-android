@@ -6,12 +6,15 @@ import io.piano.android.cxense.model.CandidateSegment
 import io.piano.android.cxense.model.ContentUser
 import io.piano.android.cxense.model.Impression
 import io.piano.android.cxense.model.Segment
+import io.piano.android.cxense.model.SegmentLookupRequest.SegmentContext
+import io.piano.android.cxense.model.SegmentLookupResponse
 import io.piano.android.cxense.model.User
 import io.piano.android.cxense.model.UserExternalTypedData
 import io.piano.android.cxense.model.UserIdentity
 import io.piano.android.cxense.model.UserSegmentRequest
 import io.piano.android.cxense.model.WidgetContext
 import io.piano.android.cxense.model.WidgetItem
+import kotlinx.coroutines.CancellableContinuation
 import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
@@ -21,15 +24,7 @@ public suspend fun CxenseSdk.trackClick(item: WidgetItem): Unit =
     suspendCancellableCoroutine { continuation ->
         trackClick(
             item,
-            object : LoadCallback<Unit> {
-                override fun onSuccess(data: Unit) {
-                    continuation.resume(Unit)
-                }
-
-                override fun onError(throwable: Throwable) {
-                    continuation.resumeWithException(throwable)
-                }
-            }
+            continuation.toLoadCallback(),
         )
     }
 
@@ -38,15 +33,7 @@ public suspend fun CxenseSdk.trackClick(url: String): Unit =
     suspendCancellableCoroutine { continuation ->
         trackClick(
             url,
-            object : LoadCallback<Unit> {
-                override fun onSuccess(data: Unit) {
-                    continuation.resume(Unit)
-                }
-
-                override fun onError(throwable: Throwable) {
-                    continuation.resumeWithException(throwable)
-                }
-            }
+            continuation.toLoadCallback(),
         )
     }
 
@@ -67,15 +54,7 @@ public suspend fun CxenseSdk.loadWidgetRecommendations(
         tag,
         prnd,
         experienceId,
-        object : LoadCallback<List<WidgetItem>> {
-            override fun onSuccess(data: List<WidgetItem>) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -84,16 +63,25 @@ public suspend fun CxenseSdk.reportWidgetVisibilities(
     vararg impressions: Impression,
 ): Unit = suspendCancellableCoroutine { continuation ->
     reportWidgetVisibilities(
-        object : LoadCallback<Unit> {
-            override fun onSuccess(data: Unit) {
-                continuation.resume(Unit)
-            }
+        continuation.toLoadCallback(),
+        *impressions,
+    )
+}
 
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        },
-        *impressions
+public suspend fun CxenseSdk.lookupSegments(
+    siteGroupIds: List<String>,
+    identities: List<UserIdentity>? = null,
+    candidateSegmentIds: List<String>? = null,
+    shortIds: Boolean = false,
+    segmentContext: SegmentContext? = null,
+): SegmentLookupResponse = suspendCancellableCoroutine { continuation ->
+    lookupSegments(
+        siteGroupIds,
+        identities,
+        candidateSegmentIds,
+        shortIds,
+        segmentContext,
+        continuation.toLoadCallback(),
     )
 }
 
@@ -109,15 +97,7 @@ public suspend fun CxenseSdk.getUserSegments(
         siteGroupIds,
         candidateSegments,
         segmentFormat,
-        object : LoadCallback<List<Segment>> {
-            override fun onSuccess(data: List<Segment>) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -134,15 +114,7 @@ public suspend fun CxenseSdk.getUser(
         groups,
         recent,
         identityTypes,
-        object : LoadCallback<User> {
-            override fun onSuccess(data: User) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -159,15 +131,7 @@ public suspend fun CxenseSdk.getUserExternalTypedData(
         id,
         filter,
         groups,
-        object : LoadCallback<List<UserExternalTypedData>> {
-            override fun onSuccess(data: List<UserExternalTypedData>) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -177,15 +141,7 @@ public suspend fun CxenseSdk.setUserExternalTypedData(
 ): Unit = suspendCancellableCoroutine { continuation ->
     setUserExternalTypedData(
         userExternalData,
-        object : LoadCallback<Unit> {
-            override fun onSuccess(data: Unit) {
-                continuation.resume(Unit)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -195,15 +151,7 @@ public suspend fun CxenseSdk.deleteUserExternalData(
 ): Unit = suspendCancellableCoroutine { continuation ->
     deleteUserExternalData(
         identity,
-        object : LoadCallback<Unit> {
-            override fun onSuccess(data: Unit) {
-                continuation.resume(Unit)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -215,15 +163,7 @@ public suspend fun CxenseSdk.getUserExternalLink(
     getUserExternalLink(
         cxenseId,
         type,
-        object : LoadCallback<UserIdentity> {
-            override fun onSuccess(data: UserIdentity) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -235,15 +175,7 @@ public suspend fun CxenseSdk.addUserExternalLink(
     addUserExternalLink(
         cxenseId,
         identity,
-        object : LoadCallback<UserIdentity> {
-            override fun onSuccess(data: UserIdentity) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
 
@@ -258,14 +190,18 @@ public suspend inline fun <reified T : Any> CxenseSdk.executePersistedQuery(
         url,
         persistentQueryId,
         data,
-        object : LoadCallback<T> {
-            override fun onSuccess(data: T) {
-                continuation.resume(data)
-            }
-
-            override fun onError(throwable: Throwable) {
-                continuation.resumeWithException(throwable)
-            }
-        }
+        continuation.toLoadCallback(),
     )
 }
+
+@PublishedApi
+internal inline fun <reified T : Any> CancellableContinuation<T>.toLoadCallback(): LoadCallback<T> =
+    object : LoadCallback<T> {
+        override fun onSuccess(data: T) {
+            resume(data)
+        }
+
+        override fun onError(throwable: Throwable) {
+            resumeWithException(throwable)
+        }
+    }

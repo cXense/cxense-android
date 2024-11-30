@@ -130,7 +130,7 @@ public class WidgetContext internal constructor(
                 Collections.unmodifiableMap(categories),
                 Collections.unmodifiableList(keywords),
                 Collections.unmodifiableList(neighbors),
-                Collections.unmodifiableList(parameters)
+                Collections.unmodifiableList(parameters),
             )
         }
     }

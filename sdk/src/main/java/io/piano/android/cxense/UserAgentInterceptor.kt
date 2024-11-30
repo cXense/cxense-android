@@ -14,6 +14,6 @@ internal class UserAgentInterceptor(
         chain.request()
             .newBuilder()
             .header("User-Agent", userAgentProvider.userAgent)
-            .build()
+            .build(),
     )
 }

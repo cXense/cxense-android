@@ -75,6 +75,11 @@ public const val ENDPOINT_READ_USER_EXTERNAL_LINK: String = "profile/user/extern
 public const val ENDPOINT_UPDATE_USER_EXTERNAL_LINK: String = "profile/user/external/link/update"
 
 /**
+ * Endpoint for lookup segments
+ */
+public const val ENDPOINT_SEGMENTS_LOOKUP: String = "segment/lookup"
+
+/**
  * Endpoint for pushing DMP events
  */
 public const val ENDPOINT_PUSH_DMP_EVENTS: String = "dmp/push"

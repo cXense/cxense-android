@@ -23,7 +23,7 @@ class PageViewEventBuilderTest {
     fun buildWithoutLocationAndContentId() {
         assertFailsWithMessage<IllegalStateException>(
             "location or content id",
-            "Expected fail for location and content id"
+            "Expected fail for location and content id",
         ) {
             builder.location(null).contentId(null).build()
         }

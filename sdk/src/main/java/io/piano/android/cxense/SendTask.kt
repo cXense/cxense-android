@@ -24,7 +24,7 @@ internal class SendTask(
     private fun EventRecord.toEventStatus(e: Exception? = null) = EventStatus(
         customId,
         isSent,
-        e
+        e,
     )
 
     private fun List<EventRecord>.notifyCallback(e: Exception? = null) = map { it.toEventStatus(e) }.notifyCallback()
@@ -45,7 +45,7 @@ internal class SendTask(
                                 }
                             }
                             errorParser.parseError(this)
-                        }
+                        },
                     )
                 }
         } catch (e: Exception) {
@@ -64,13 +64,12 @@ internal class SendTask(
     }
 
     internal fun sendDmpEventsViaPersisted(events: List<EventRecord>) = sendEventsOneByOne(events) { record ->
-        performanceEventConverter.extractQueryData(record)?.let { (segments, data) ->
+        performanceEventConverter.extractQueryData(record)?.let { data ->
             with(
                 cxApi.trackDmpEvent(
                     configuration.credentialsProvider.getDmpPushPersistentId(),
-                    segments ?: listOf(),
-                    data
-                ).execute()
+                    data,
+                ).execute(),
             ) {
                 if (isSuccessful) {
                     record.isSent = true

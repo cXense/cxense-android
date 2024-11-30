@@ -37,22 +37,22 @@ internal class EventRepository(
 
     fun deleteOutdatedEvents(outdatePeriod: Long): Int = databaseHelper.delete(
         "${EventRecord.TIME} < ?",
-        (System.currentTimeMillis() - outdatePeriod).toString()
+        (System.currentTimeMillis() - outdatePeriod).toString(),
     )
 
     fun getNotSubmittedPvEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} = ?",
-        arrayOf(PageViewEvent.EVENT_TYPE)
+        arrayOf(PageViewEvent.EVENT_TYPE),
     )
 
     fun getNotSubmittedDmpEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} <> ? AND ${EventRecord.TYPE} <> ?",
-        arrayOf(PageViewEvent.EVENT_TYPE, ConversionEvent.EVENT_TYPE)
+        arrayOf(PageViewEvent.EVENT_TYPE, ConversionEvent.EVENT_TYPE),
     )
 
     fun getNotSubmittedConversionEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} = ?",
-        arrayOf(ConversionEvent.EVENT_TYPE)
+        arrayOf(ConversionEvent.EVENT_TYPE),
     )
 
     internal fun getEvents(
@@ -63,23 +63,23 @@ internal class EventRepository(
         selection = selection,
         selectionArgs = selectionArgs,
         orderBy = "${EventRecord.TIME} ASC",
-        limit = limit
+        limit = limit,
     ).map { it.toEventRecord() }
 
     fun getPvEventFromDatabase(eventId: String): EventRecord? = databaseHelper.query(
         selection = "${EventRecord.CUSTOM_ID} = ? AND ${EventRecord.TYPE} = ?",
         selectionArgs = arrayOf(eventId, PageViewEvent.EVENT_TYPE),
         orderBy = "${EventRecord.TIME} DESC",
-        limit = "1"
+        limit = "1",
     ).firstOrNull()?.toEventRecord()
 
     fun getEventStatuses(): List<EventStatus> = databaseHelper.query(
         columns = arrayOf(EventRecord.CUSTOM_ID, EventRecord.IS_SENT),
-        orderBy = "${EventRecord.TIME} ASC"
+        orderBy = "${EventRecord.TIME} ASC",
     ).map {
         EventStatus(
             it.getAsString(EventRecord.CUSTOM_ID),
-            it.getAsBoolean(EventRecord.IS_SENT)
+            it.getAsBoolean(EventRecord.IS_SENT),
         )
     }
 
@@ -94,8 +94,8 @@ internal class EventRepository(
                     putEventRecordInDatabase(
                         record.copy(
                             data = updateActiveTimeData(record.data, time),
-                            spentTime = time
-                        )
+                            spentTime = time,
+                        ),
                     )
                 }
         } catch (e: Exception) {
@@ -106,7 +106,7 @@ internal class EventRepository(
     private fun EventConverter.buildEventRecord(e: Event): EventRecord? = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.MERGE_KEY} = ? AND ${EventRecord.TIME} > ?",
         arrayOf(e.mergeKey.toString(), (System.currentTimeMillis() - configuration.eventsMergePeriod).toString()),
-        limit = "1"
+        limit = "1",
     ).firstOrNull()?.let {
         update(it, e)
     } ?: toEventRecord(e)
@@ -121,7 +121,7 @@ internal class EventRepository(
         getAsLong(EventRecord.SPENT_TIME),
         getAsInteger(EventRecord.MERGE_KEY),
         getAsLong(BaseColumns._ID),
-        getAsBoolean(EventRecord.IS_SENT)
+        getAsBoolean(EventRecord.IS_SENT),
     )
 
     companion object {
