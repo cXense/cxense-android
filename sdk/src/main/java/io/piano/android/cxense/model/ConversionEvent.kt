@@ -137,7 +137,7 @@ public class ConversionEvent internal constructor(
                 productId,
                 funnelStep,
                 productPrice,
-                renewalFrequency
+                renewalFrequency,
             )
         }
     }

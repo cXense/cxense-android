@@ -14,13 +14,15 @@ internal class DatabaseHelper(
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase?) {
-        for (v in 0 until DATABASE_VERSION)
+        for (v in 0 until DATABASE_VERSION) {
             migrate(db, v)
+        }
     }
 
     override fun onUpgrade(db: SQLiteDatabase?, oldVersion: Int, newVersion: Int) {
-        for (v in oldVersion until newVersion)
+        for (v in oldVersion until newVersion) {
             migrate(db, v)
+        }
     }
 
     fun migrate(db: SQLiteDatabase?, version: Int) {
@@ -40,13 +42,13 @@ internal class DatabaseHelper(
                         ${EventRecord.SPENT_TIME} INTEGER,
                         ${EventRecord.IS_SENT} INTEGER
                         );
-                    """.trimIndent()
+                    """.trimIndent(),
                 )
             1 -> db?.execSQL(
                 """
                     ALTER TABLE ${EventRecord.TABLE_NAME} 
                     ADD COLUMN ${EventRecord.MERGE_KEY} INTEGER DEFAULT 0
-                """.trimIndent()
+                """.trimIndent(),
             )
         }
     }
@@ -56,12 +58,12 @@ internal class DatabaseHelper(
             EventRecord.TABLE_NAME,
             eventRecord.toContentValues(),
             "${BaseColumns._ID} = ?",
-            arrayOf(id.toString())
+            arrayOf(id.toString()),
         ).toLong()
     } ?: writableDatabase.insert(
         EventRecord.TABLE_NAME,
         null,
-        eventRecord.toContentValues()
+        eventRecord.toContentValues(),
     )
 
     fun delete(eventRecord: EventRecord): Int = eventRecord.id?.let { id ->
@@ -87,7 +89,7 @@ internal class DatabaseHelper(
         groupBy,
         having,
         orderBy,
-        limit
+        limit,
     ).use { c ->
         generateSequence { if (c.moveToNext()) c else null }
             .map(Companion::cursorRowToContentValues)

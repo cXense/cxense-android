@@ -13,7 +13,7 @@ class ExternalUserIdTest {
     fun createWithInternalIdError() {
         assertFailsWithMessage<IllegalArgumentException>(
             "characters for internal ids",
-            "Expected fail for internal user id"
+            "Expected fail for internal user id",
         ) {
             ExternalUserId("cx", "test/")
         }
@@ -28,7 +28,7 @@ class ExternalUserIdTest {
     fun createWithExternalIdError() {
         assertFailsWithMessage<IllegalArgumentException>(
             "characters for external ids",
-            "Expected fail for external user id"
+            "Expected fail for external user id",
         ) {
             ExternalUserId("cxd", "test'")
         }

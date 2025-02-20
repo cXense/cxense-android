@@ -80,6 +80,7 @@ public final class io/piano/android/cxense/CxenseConstants {
 	public static final field ENDPOINT_PUSH_DMP_EVENTS Ljava/lang/String;
 	public static final field ENDPOINT_READ_USER_EXTERNAL_DATA Ljava/lang/String;
 	public static final field ENDPOINT_READ_USER_EXTERNAL_LINK Ljava/lang/String;
+	public static final field ENDPOINT_SEGMENTS_LOOKUP Ljava/lang/String;
 	public static final field ENDPOINT_UPDATE_USER_EXTERNAL_DATA Ljava/lang/String;
 	public static final field ENDPOINT_UPDATE_USER_EXTERNAL_LINK Ljava/lang/String;
 	public static final field ENDPOINT_USER_PROFILE Ljava/lang/String;
@@ -110,10 +111,6 @@ public final class io/piano/android/cxense/CxenseSdk {
 	public final fun getUser (Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;Ljava/lang/Boolean;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun getUser (Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;Ljava/lang/Boolean;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
 	public static synthetic fun getUser$default (Lio/piano/android/cxense/CxenseSdk;Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;Ljava/lang/Boolean;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;ILjava/lang/Object;)V
-	public final fun getUserExternalData (Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
-	public final fun getUserExternalData (Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
-	public final fun getUserExternalData (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
-	public static synthetic fun getUserExternalData$default (Lio/piano/android/cxense/CxenseSdk;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;ILjava/lang/Object;)V
 	public final fun getUserExternalLink (Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun getUserExternalTypedData (Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun getUserExternalTypedData (Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
@@ -121,7 +118,6 @@ public final class io/piano/android/cxense/CxenseSdk {
 	public final fun getUserExternalTypedData (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
 	public static synthetic fun getUserExternalTypedData$default (Lio/piano/android/cxense/CxenseSdk;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;ILjava/lang/Object;)V
 	public final fun getUserId ()Ljava/lang/String;
-	public final fun getUserSegmentIds (Ljava/util/List;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun getUserSegments (Ljava/util/List;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun getUserSegments (Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun getUserSegments (Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/piano/android/cxense/model/UserSegmentRequest$SegmentFormat;Lio/piano/android/cxense/LoadCallback;)V
@@ -133,10 +129,15 @@ public final class io/piano/android/cxense/CxenseSdk {
 	public final fun loadWidgetRecommendations (Ljava/lang/String;Lio/piano/android/cxense/model/WidgetContext;Lio/piano/android/cxense/model/ContentUser;Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun loadWidgetRecommendations (Ljava/lang/String;Lio/piano/android/cxense/model/WidgetContext;Lio/piano/android/cxense/model/ContentUser;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;)V
 	public static synthetic fun loadWidgetRecommendations$default (Lio/piano/android/cxense/CxenseSdk;Ljava/lang/String;Lio/piano/android/cxense/model/WidgetContext;Lio/piano/android/cxense/model/ContentUser;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lio/piano/android/cxense/LoadCallback;ILjava/lang/Object;)V
+	public final fun lookupSegments (Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
+	public final fun lookupSegments (Ljava/util/List;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
+	public final fun lookupSegments (Ljava/util/List;Ljava/util/List;Ljava/util/List;Lio/piano/android/cxense/LoadCallback;)V
+	public final fun lookupSegments (Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/LoadCallback;)V
+	public final fun lookupSegments (Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;Lio/piano/android/cxense/LoadCallback;)V
+	public static synthetic fun lookupSegments$default (Lio/piano/android/cxense/CxenseSdk;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;Lio/piano/android/cxense/LoadCallback;ILjava/lang/Object;)V
 	public final fun pushEvents ([Lio/piano/android/cxense/model/Event;)V
 	public final fun reportWidgetVisibilities (Lio/piano/android/cxense/LoadCallback;[Lio/piano/android/cxense/model/Impression;)V
 	public final fun setDispatchEventsCallback (Lio/piano/android/cxense/CxenseSdk$DispatchEventsCallback;)V
-	public final fun setUserExternalData (Lio/piano/android/cxense/model/UserExternalData;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun setUserExternalTypedData (Lio/piano/android/cxense/model/UserExternalTypedData;Lio/piano/android/cxense/LoadCallback;)V
 	public final fun setUserId (Ljava/lang/String;)V
 	public final fun trackActiveTime (Ljava/lang/String;)V
@@ -186,6 +187,8 @@ public final class io/piano/android/cxense/KotlinExtensions {
 	public static final fun loadWidgetRecommendations (Lio/piano/android/cxense/CxenseSdk;Ljava/lang/String;Lio/piano/android/cxense/model/WidgetContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun loadWidgetRecommendations (Lio/piano/android/cxense/CxenseSdk;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static synthetic fun loadWidgetRecommendations$default (Lio/piano/android/cxense/CxenseSdk;Ljava/lang/String;Lio/piano/android/cxense/model/WidgetContext;Lio/piano/android/cxense/model/ContentUser;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public static final fun lookupSegments (Lio/piano/android/cxense/CxenseSdk;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
+	public static synthetic fun lookupSegments$default (Lio/piano/android/cxense/CxenseSdk;Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
 	public static final fun reportWidgetVisibilities (Lio/piano/android/cxense/CxenseSdk;[Lio/piano/android/cxense/model/Impression;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun setUserExternalTypedData (Lio/piano/android/cxense/CxenseSdk;Lio/piano/android/cxense/model/UserExternalTypedData;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
 	public static final fun trackClick (Lio/piano/android/cxense/CxenseSdk;Lio/piano/android/cxense/model/WidgetItem;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
@@ -514,7 +517,6 @@ public final class io/piano/android/cxense/model/PerformanceEvent : io/piano/and
 	public final fun getOrigin ()Ljava/lang/String;
 	public final fun getPrnd ()Ljava/lang/String;
 	public final fun getRnd ()Ljava/lang/String;
-	public final fun getSegments ()Ljava/util/List;
 	public final fun getSiteId ()Ljava/lang/String;
 	public final fun getTime ()J
 }
@@ -526,16 +528,12 @@ public final class io/piano/android/cxense/model/PerformanceEvent$Builder {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;J)V
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;)V
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public final fun addCustomParameters (Ljava/lang/Iterable;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
 	public final fun addCustomParameters ([Lio/piano/android/cxense/model/CustomParameter;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
 	public final fun addIdentities (Ljava/lang/Iterable;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
 	public final fun addIdentities ([Lio/piano/android/cxense/model/UserIdentity;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
-	public final fun addSegments (Ljava/lang/Iterable;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
-	public final fun addSegments ([Ljava/lang/String;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
 	public final fun build ()Lio/piano/android/cxense/model/PerformanceEvent;
-	public final fun component10 ()Ljava/util/List;
 	public final fun component2 ()Ljava/lang/String;
 	public final fun component3 ()Ljava/lang/String;
 	public final fun component4 ()Ljava/lang/String;
@@ -544,8 +542,8 @@ public final class io/piano/android/cxense/model/PerformanceEvent$Builder {
 	public final fun component7 ()Ljava/lang/String;
 	public final fun component8 ()J
 	public final fun component9 ()Ljava/util/List;
-	public final fun copy (Lio/piano/android/cxense/UserProvider;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/List;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
-	public static synthetic fun copy$default (Lio/piano/android/cxense/model/PerformanceEvent$Builder;Lio/piano/android/cxense/UserProvider;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/List;ILjava/lang/Object;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
+	public final fun copy (Lio/piano/android/cxense/UserProvider;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
+	public static synthetic fun copy$default (Lio/piano/android/cxense/model/PerformanceEvent$Builder;Lio/piano/android/cxense/UserProvider;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;ILjava/lang/Object;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
 	public final fun currentTime ()Lio/piano/android/cxense/model/PerformanceEvent$Builder;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun eventId (Ljava/lang/String;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
@@ -556,7 +554,6 @@ public final class io/piano/android/cxense/model/PerformanceEvent$Builder {
 	public final fun getIdentities ()Ljava/util/List;
 	public final fun getOrigin ()Ljava/lang/String;
 	public final fun getPrnd ()Ljava/lang/String;
-	public final fun getSegments ()Ljava/util/List;
 	public final fun getSiteId ()Ljava/lang/String;
 	public final fun getTime ()J
 	public fun hashCode ()I
@@ -568,7 +565,6 @@ public final class io/piano/android/cxense/model/PerformanceEvent$Builder {
 	public final fun setIdentities (Ljava/util/List;)V
 	public final fun setOrigin (Ljava/lang/String;)V
 	public final fun setPrnd (Ljava/lang/String;)V
-	public final fun setSegments (Ljava/util/List;)V
 	public final fun setSiteId (Ljava/lang/String;)V
 	public final fun setTime (J)V
 	public final fun siteId (Ljava/lang/String;)Lio/piano/android/cxense/model/PerformanceEvent$Builder;
@@ -603,27 +599,61 @@ public final class io/piano/android/cxense/model/SegmentJsonAdapter : com/square
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/piano/android/cxense/model/SegmentType : java/lang/Enum {
-	public static final field EXTERNAL Lio/piano/android/cxense/model/SegmentType;
-	public static final field LOOKALIKE Lio/piano/android/cxense/model/SegmentType;
-	public static final field TRAFFIC Lio/piano/android/cxense/model/SegmentType;
-	public static fun getEntries ()Lkotlin/enums/EnumEntries;
-	public static fun valueOf (Ljava/lang/String;)Lio/piano/android/cxense/model/SegmentType;
-	public static fun values ()[Lio/piano/android/cxense/model/SegmentType;
+public final class io/piano/android/cxense/model/SegmentLookupRequest {
+	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;ZLio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getCandidateSegmentIds ()Ljava/util/List;
+	public final fun getIdentities ()Ljava/util/List;
+	public final fun getSegmentContext ()Lio/piano/android/cxense/model/SegmentLookupRequest$SegmentContext;
+	public final fun getShortIds ()Z
+	public final fun getSiteGroups ()Ljava/util/List;
 }
 
-public final class io/piano/android/cxense/model/SegmentsResponse {
-	public fun <init> ()V
-	public fun <init> (Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getIds ()Ljava/util/List;
+public final class io/piano/android/cxense/model/SegmentLookupRequest$SegmentContext {
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;)V
+	public final fun getSiteId ()Ljava/lang/String;
+	public final fun getUrl ()Ljava/lang/String;
 }
 
-public final class io/piano/android/cxense/model/SegmentsResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+public final class io/piano/android/cxense/model/SegmentLookupRequestJsonAdapter : com/squareup/moshi/JsonAdapter {
 	public fun <init> (Lcom/squareup/moshi/Moshi;)V
 	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
 	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/piano/android/cxense/model/SegmentLookupRequest_SegmentContextJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/piano/android/cxense/model/SegmentLookupResponse {
+	public fun <init> ()V
+	public fun <init> (Ljava/util/List;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/util/List;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public final fun getSegmentCompositionTrees ()Ljava/util/List;
+	public final fun getSegments ()Ljava/util/List;
+}
+
+public final class io/piano/android/cxense/model/SegmentLookupResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
+public final class io/piano/android/cxense/model/SegmentType : java/lang/Enum {
+	public static final field COMBINED Lio/piano/android/cxense/model/SegmentType;
+	public static final field CONTEXTUAL Lio/piano/android/cxense/model/SegmentType;
+	public static final field EXTERNAL Lio/piano/android/cxense/model/SegmentType;
+	public static final field LOOKALIKE Lio/piano/android/cxense/model/SegmentType;
+	public static final field TRAFFIC Lio/piano/android/cxense/model/SegmentType;
+	public static final field UNKNOWN Lio/piano/android/cxense/model/SegmentType;
+	public static fun getEntries ()Lkotlin/enums/EnumEntries;
+	public static fun valueOf (Ljava/lang/String;)Lio/piano/android/cxense/model/SegmentType;
+	public static fun values ()[Lio/piano/android/cxense/model/SegmentType;
 }
 
 public abstract class io/piano/android/cxense/model/TypedItem {
@@ -718,38 +748,6 @@ public final class io/piano/android/cxense/model/UserDataRequestJsonAdapter : co
 	public fun toString ()Ljava/lang/String;
 }
 
-public final class io/piano/android/cxense/model/UserExternalData : io/piano/android/cxense/model/UserIdentity {
-	public final fun getItems ()Ljava/util/List;
-}
-
-public final class io/piano/android/cxense/model/UserExternalData$Builder {
-	public fun <init> (Lio/piano/android/cxense/model/UserIdentity;)V
-	public fun <init> (Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;)V
-	public synthetic fun <init> (Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun addExternalItems (Ljava/lang/Iterable;)Lio/piano/android/cxense/model/UserExternalData$Builder;
-	public final fun addExternalItems ([Lio/piano/android/cxense/model/ExternalItem;)Lio/piano/android/cxense/model/UserExternalData$Builder;
-	public final fun build ()Lio/piano/android/cxense/model/UserExternalData;
-	public final fun component1 ()Lio/piano/android/cxense/model/UserIdentity;
-	public final fun component2 ()Ljava/util/List;
-	public final fun copy (Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;)Lio/piano/android/cxense/model/UserExternalData$Builder;
-	public static synthetic fun copy$default (Lio/piano/android/cxense/model/UserExternalData$Builder;Lio/piano/android/cxense/model/UserIdentity;Ljava/util/List;ILjava/lang/Object;)Lio/piano/android/cxense/model/UserExternalData$Builder;
-	public fun equals (Ljava/lang/Object;)Z
-	public final fun getExternalItems ()Ljava/util/List;
-	public final fun getIdentity ()Lio/piano/android/cxense/model/UserIdentity;
-	public fun hashCode ()I
-	public final fun identity (Lio/piano/android/cxense/model/UserIdentity;)Lio/piano/android/cxense/model/UserExternalData$Builder;
-	public final fun setExternalItems (Ljava/util/List;)V
-	public final fun setIdentity (Lio/piano/android/cxense/model/UserIdentity;)V
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/piano/android/cxense/model/UserExternalDataJsonAdapter : com/squareup/moshi/JsonAdapter {
-	public fun <init> (Lcom/squareup/moshi/Moshi;)V
-	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
-	public fun toString ()Ljava/lang/String;
-}
-
 public final class io/piano/android/cxense/model/UserExternalDataRequest {
 	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/piano/android/cxense/model/UserExternalDataRequest$ResponseFormat;)V
 	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/util/List;Lio/piano/android/cxense/model/UserExternalDataRequest$ResponseFormat;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
@@ -769,20 +767,6 @@ public final class io/piano/android/cxense/model/UserExternalDataRequest$Respons
 }
 
 public final class io/piano/android/cxense/model/UserExternalDataRequestJsonAdapter : com/squareup/moshi/JsonAdapter {
-	public fun <init> (Lcom/squareup/moshi/Moshi;)V
-	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
-	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class io/piano/android/cxense/model/UserExternalDataResponse {
-	public fun <init> ()V
-	public fun <init> (Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
-	public final fun getItems ()Ljava/util/List;
-}
-
-public final class io/piano/android/cxense/model/UserExternalDataResponseJsonAdapter : com/squareup/moshi/JsonAdapter {
 	public fun <init> (Lcom/squareup/moshi/Moshi;)V
 	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
 	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V

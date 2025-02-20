@@ -54,12 +54,12 @@ internal class PageViewEventConverter(
             NEW_USER to newUser?.let { if (it) "1" else "0" },
             CONSENT to configuration.consentSettings.consents.joinToString(separator = ","),
             CONSENT_VERSION to configuration.consentSettings.version.toString(),
-            "${CUSTOM_PARAMETER_PREFIX}sdk_version" to BuildConfig.SDK_VERSION
+            "${CUSTOM_PARAMETER_PREFIX}sdk_version" to BuildConfig.SDK_VERSION,
         )
         val appMetadata = if (configuration.autoMetaInfoTrackingEnabled) {
             sequenceOf(
                 "${CUSTOM_PARAMETER_PREFIX}app" to deviceInfoProvider.applicationName,
-                "${CUSTOM_PARAMETER_PREFIX}appv" to (deviceInfoProvider.applicationVersion ?: "")
+                "${CUSTOM_PARAMETER_PREFIX}appv" to (deviceInfoProvider.applicationVersion ?: ""),
             )
         } else {
             emptySequence()
@@ -76,7 +76,7 @@ internal class PageViewEventConverter(
     }.flatMapIndexed { i, id ->
         listOf(
             "$EXTERNAL_USER_KEY$i" to id.userType,
-            "$EXTERNAL_USER_VALUE$i" to id.userId
+            "$EXTERNAL_USER_VALUE$i" to id.userId,
         )
     }
 
@@ -93,7 +93,7 @@ internal class PageViewEventConverter(
             userId,
             rnd,
             time,
-            mergeKey = mergeKey
+            mergeKey = mergeKey,
         )
     }
 
@@ -104,19 +104,19 @@ internal class PageViewEventConverter(
             val ids = externalUserIds.toSet() + oldIds.map { ExternalUserId(it, old[it].orEmpty()) }
             val map = old - oldIds + queryMap + ids.take(PageViewEvent.MAX_EXTERNAL_USER_IDS).toPairs()
             oldRecord.copy(
-                data = mapAdapter.toJson(map)
+                data = mapAdapter.toJson(map),
             )
         } ?: oldRecord
     }
 
     internal fun updateActiveTimeData(data: String, activeTime: Long): String = requireNotNull(
-        mapAdapter.fromJson(data)
+        mapAdapter.fromJson(data),
     ).let {
         // some black magic with map
         val map = it + mapOf(
             ACTIVE_RND to it[RND].toString(),
             ACTIVE_TIME to it[TIME].toString(),
-            ACTIVE_SPENT_TIME to activeTime.toString()
+            ACTIVE_SPENT_TIME to activeTime.toString(),
         )
         mapAdapter.toJson(map)
     }

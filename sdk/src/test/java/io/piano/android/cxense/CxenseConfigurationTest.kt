@@ -35,7 +35,7 @@ class CxenseConfigurationTest {
     fun setInvalidDispatchPeriod() {
         assertFailsWithMessage<IllegalArgumentException>(
             "greater than $MIN_DISPATCH_PERIOD_SECONDS seconds",
-            "Expected fail for dispatch period"
+            "Expected fail for dispatch period",
         ) {
             configuration.dispatchPeriod(MIN_DISPATCH_PERIOD - 1, TimeUnit.MILLISECONDS)
         }
@@ -46,7 +46,7 @@ class CxenseConfigurationTest {
     fun setInvalidOutdatePeriod() {
         assertFailsWithMessage<IllegalArgumentException>(
             "greater than $MIN_OUTDATE_PERIOD_SECONDS seconds",
-            "Expected fail for dispatch period"
+            "Expected fail for dispatch period",
         ) {
             configuration.outdatePeriod(MIN_OUTDATE_PERIOD - 1, TimeUnit.MILLISECONDS)
         }

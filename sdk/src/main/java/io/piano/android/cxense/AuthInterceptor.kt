@@ -20,9 +20,7 @@ internal class AuthInterceptor(
     internal val dateString: String
         get() = DATE_FORMAT.format(Date())
 
-    override fun intercept(chain: Interceptor.Chain): Response {
-        return chain.proceed(chain.request().addAuth())
-    }
+    override fun intercept(chain: Interceptor.Chain): Response = chain.proceed(chain.request().addAuth())
 
     private fun Request.addAuth(): Request {
         try {
@@ -32,7 +30,7 @@ internal class AuthInterceptor(
                         AUTH_HEADER,
                         cxenseConfiguration.credentialsProvider.run {
                             createToken(getUsername(), getApiKey())
-                        }
+                        },
                     )
                     .build()
             } ?: this

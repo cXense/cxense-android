@@ -47,7 +47,7 @@ class AuthInterceptorTest : BaseInterceptorTest() {
                 Request.Builder()
                     .url(mockWebServer.url("/"))
                     .tag(Invocation::class.java, invocation)
-                    .build()
+                    .build(),
             )
             .execute()
         assertEquals(AUTH_VALUE, mockWebServer.takeRequest().getHeader(AuthInterceptor.AUTH_HEADER))

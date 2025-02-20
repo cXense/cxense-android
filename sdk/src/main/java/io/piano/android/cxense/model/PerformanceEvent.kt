@@ -19,7 +19,6 @@ import java.util.concurrent.TimeUnit
  * @property eventId custom event id, that used for tracking locally.
  * @property prnd an alternative specification for page view event id.
  * @property time the exact datetime of an event
- * @property segments optional collection of matching segments to be reported.
  * @property customParameters optional collection of customer-defined parameters to event.
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
@@ -32,7 +31,6 @@ public class PerformanceEvent internal constructor(
     @Json(name = TYPE) public val eventType: String,
     @Json(name = PRND) public val prnd: String?,
     @Json(name = TIME) public val time: Long,
-    @Json(name = SEGMENT_IDS) public val segments: List<String>?,
     @Json(name = CUSTOM_PARAMETERS) public val customParameters: List<CustomParameter>,
     @Json(name = "consent") public val consentOptions: List<String>,
     @Json(name = RND) public val rnd: String,
@@ -49,7 +47,6 @@ public class PerformanceEvent internal constructor(
      * @property prnd an alternative specification for page view event id. In order to link DMP events to page views this value
      * must be identical to the rnd value of the page view event.
      * @property time the exact datetime of an event in milliseconds
-     * @property segments optional collection of matching segments to be reported.
      * @property customParameters optional collection of customer-defined parameters to event.
      */
     public data class Builder internal constructor(
@@ -61,7 +58,6 @@ public class PerformanceEvent internal constructor(
         var eventId: String? = null,
         var prnd: String? = null,
         var time: Long = System.currentTimeMillis(),
-        @Deprecated("Deprecated at backend") var segments: MutableList<String> = mutableListOf(),
         var customParameters: MutableList<CustomParameter> = mutableListOf(),
     ) {
 
@@ -74,7 +70,6 @@ public class PerformanceEvent internal constructor(
             eventId: String? = null,
             prnd: String? = null,
             time: Long = System.currentTimeMillis(),
-            segments: MutableList<String> = mutableListOf(),
             customParameters: MutableList<CustomParameter> = mutableListOf(),
         ) : this(
             DependenciesProvider.getInstance().userProvider,
@@ -85,8 +80,7 @@ public class PerformanceEvent internal constructor(
             eventId,
             prnd,
             time,
-            segments,
-            customParameters
+            customParameters,
         )
 
         /**
@@ -147,20 +141,6 @@ public class PerformanceEvent internal constructor(
         public fun time(date: Date): Builder = apply { this.time = date.time }
 
         /**
-         * Adds matching segments to be reported.
-         * @param segments one or many segment ids
-         */
-        @Deprecated("Deprecated at backend")
-        public fun addSegments(vararg segments: String): Builder = apply { this.segments.addAll(segments) }
-
-        /**
-         * Adds matching segments to be reported.
-         * @param segments [Iterable] with segment ids
-         */
-        @Deprecated("Deprecated at backend")
-        public fun addSegments(segments: Iterable<String>): Builder = apply { this.segments.addAll(segments) }
-
-        /**
          * Adds custom parameters.
          * @param customParameters one or many [CustomParameter] objects
          */
@@ -204,10 +184,9 @@ public class PerformanceEvent internal constructor(
                     eventType,
                     prnd,
                     TimeUnit.MILLISECONDS.toSeconds(time),
-                    segments.takeUnless { it.isEmpty() }?.let { Collections.unmodifiableList(it) },
                     Collections.unmodifiableList(customParameters),
                     consentSettings.consents,
-                    randomIdProvider(time)
+                    randomIdProvider(time),
                 )
             }
         }
@@ -222,7 +201,6 @@ public class PerformanceEvent internal constructor(
         internal const val SITE_ID = "siteId"
         internal const val ORIGIN = "origin"
         internal const val TYPE = "type"
-        internal const val SEGMENT_IDS = "segmentIds"
         internal const val CUSTOM_PARAMETERS = "customParameters"
     }
 }

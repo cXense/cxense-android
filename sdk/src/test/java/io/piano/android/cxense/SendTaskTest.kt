@@ -42,7 +42,7 @@ class SendTaskTest {
         on { extractQueryData(any(), any()) } doReturn mapOf()
     }
     private val performanceEventConverter: PerformanceEventConverter = mock {
-        on { extractQueryData(any()) } doReturn (listOf("") to mapOf())
+        on { extractQueryData(any()) } doReturn mapOf()
     }
     private val errorParser: ApiErrorParser = mock()
 
@@ -55,9 +55,9 @@ class SendTaskTest {
             userProvider,
             pageViewEventConverter,
             performanceEventConverter,
-            errorParser
+            errorParser,
         ) {
-        }
+        },
     )
 
     @Test

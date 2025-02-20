@@ -1,5 +1,19 @@
 # Piano DMP & Content SDK for Android
 
+## v2.7.0
+* Removed deprecated code
+* Add support for `/segment/lookup` API
+* Add support for new segment types
+* Updated dependencies
+    - Kotlin [1.9.23 -> 1.9.24]
+      https://kotlinlang.org/
+    - org.jetbrains.kotlinx:kotlinx-coroutines-core [1.8.0 -> 1.9.0]
+      https://github.com/Kotlin/kotlinx.coroutines
+    - androidx.startup:startup-runtime [1.1.1 -> 1.2.0]
+      https://developer.android.com/jetpack/androidx/releases/startup#1.2.0
+    - androidx.annotation:annotation [1.7.1 -> 1.9.1]
+      https://developer.android.com/jetpack/androidx/releases/annotation#1.9.1
+
 ## v2.6.1
 * Fix initializer visibility
 

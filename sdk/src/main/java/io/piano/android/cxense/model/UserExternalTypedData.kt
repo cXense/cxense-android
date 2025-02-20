@@ -60,7 +60,7 @@ public class UserExternalTypedData internal constructor(
                 identity.id,
                 externalItems.map {
                     ExternalTypedItem("${identity.type}-${it.group}", it.item)
-                }
+                },
             )
         }
     }

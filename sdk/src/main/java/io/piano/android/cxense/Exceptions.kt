@@ -38,7 +38,7 @@ public class BadRequestException : BaseException {
  */
 public class ForbiddenException : BaseException {
     public constructor() : super(
-        "Request failed! Please make sure that all the request parameters are valid and uses authorized values."
+        "Request failed! Please make sure that all the request parameters are valid and uses authorized values.",
     )
 
     public constructor(message: String?) : super(message)
@@ -52,7 +52,7 @@ public class ForbiddenException : BaseException {
  */
 public class NotAuthorizedException : BaseException {
     public constructor() : super(
-        "Request failed! Please make sure that all the request parameters are valid and uses authorized values."
+        "Request failed! Please make sure that all the request parameters are valid and uses authorized values.",
     )
 
     public constructor(message: String?) : super(message)

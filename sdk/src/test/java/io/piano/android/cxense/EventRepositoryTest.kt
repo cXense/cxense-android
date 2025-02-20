@@ -60,7 +60,7 @@ class EventRepositoryTest {
         verify(repository).getEvents(
             any(),
             eq(arrayOf(PageViewEvent.EVENT_TYPE, ConversionEvent.EVENT_TYPE)),
-            anyOrNull()
+            anyOrNull(),
         )
     }
 

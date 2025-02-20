@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.RestrictTo
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.Types
+import com.squareup.moshi.adapters.EnumJsonAdapter
 import com.squareup.moshi.adapters.PolymorphicJsonAdapterFactory
 import com.squareup.moshi.adapters.Rfc3339DateJsonAdapter
 import io.piano.android.cxense.db.DatabaseHelper
@@ -11,6 +12,7 @@ import io.piano.android.cxense.model.ApiError
 import io.piano.android.cxense.model.ConversionEvent
 import io.piano.android.cxense.model.EventDataRequest
 import io.piano.android.cxense.model.PerformanceEvent
+import io.piano.android.cxense.model.SegmentType
 import io.piano.android.cxense.model.TypedItem
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -52,7 +54,7 @@ internal class DependenciesProvider private constructor(
                     } else {
                         HttpLoggingInterceptor.Level.NONE
                     }
-                }
+                },
             )
             .addNetworkInterceptor(RedirectLimiterInterceptor("/public/widget/click/"))
             .build()
@@ -65,12 +67,16 @@ internal class DependenciesProvider private constructor(
         .add(IntStringAdapter)
         .add(DoubleStringAdapter)
         .add(
+            SegmentType::class.java,
+            EnumJsonAdapter.create(SegmentType::class.java).withUnknownFallback(SegmentType.UNKNOWN),
+        )
+        .add(
             PolymorphicJsonAdapterFactory.of(TypedItem::class.java, "type")
                 .withSubtype(TypedItem.String::class.java, "string")
                 .withSubtype(TypedItem.Number::class.java, "number")
                 .withSubtype(TypedItem.Time::class.java, "time")
                 .withSubtype(TypedItem.Decimal::class.java, "decimal")
-                .withDefaultValue(TypedItem.Unknown)
+                .withDefaultValue(TypedItem.Unknown),
         )
         .build()
 
@@ -92,16 +98,16 @@ internal class DependenciesProvider private constructor(
                 Types.newParameterizedType(
                     Map::class.java,
                     String::class.java,
-                    String::class.java
-                )
+                    String::class.java,
+                ),
             ),
             cxenseConfiguration,
-            deviceInfoProvider
+            deviceInfoProvider,
         )
     }
     private val performanceEventConverter: PerformanceEventConverter by lazy {
         PerformanceEventConverter(
-            moshi.adapter(PerformanceEvent::class.java)
+            moshi.adapter(PerformanceEvent::class.java),
         )
     }
     private val conversionEventConverter: ConversionEventConverter by lazy {
@@ -112,8 +118,8 @@ internal class DependenciesProvider private constructor(
         ApiErrorParser(
             retrofit.responseBodyConverter(
                 ApiError::class.java,
-                emptyArray()
-            )
+                emptyArray(),
+            ),
         )
     }
 
@@ -125,8 +131,8 @@ internal class DependenciesProvider private constructor(
             listOf(
                 pageViewEventConverter,
                 performanceEventConverter,
-                conversionEventConverter
-            )
+                conversionEventConverter,
+            ),
         )
     }
     private val eventsSendCallback: CxenseSdk.DispatchEventsCallback =
@@ -146,7 +152,7 @@ internal class DependenciesProvider private constructor(
             pageViewEventConverter,
             performanceEventConverter,
             errorParser,
-            eventsSendCallback
+            eventsSendCallback,
         )
     }
 
@@ -160,7 +166,7 @@ internal class DependenciesProvider private constructor(
             errorParser,
             moshi,
             eventRepository,
-            eventsSendTask
+            eventsSendTask,
         )
     }
 

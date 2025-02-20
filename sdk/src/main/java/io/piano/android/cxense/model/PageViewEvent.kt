@@ -100,7 +100,7 @@ public class PageViewEvent private constructor(
             newUser,
             customParameters,
             customUserParameters,
-            externalUserIds
+            externalUserIds,
         )
 
         /**
@@ -237,7 +237,7 @@ public class PageViewEvent private constructor(
                 Collections.unmodifiableList(customUserParameters),
                 Collections.unmodifiableList(externalUserIds.takeLast(MAX_EXTERNAL_USER_IDS)),
                 time,
-                DependenciesProvider.getInstance().cxenseConfiguration.randomIdProvider(time)
+                DependenciesProvider.getInstance().cxenseConfiguration.randomIdProvider(time),
             )
         }
     }

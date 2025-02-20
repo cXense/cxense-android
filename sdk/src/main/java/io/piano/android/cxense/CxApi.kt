@@ -1,14 +1,12 @@
 package io.piano.android.cxense
 
 import io.piano.android.cxense.model.EventDataRequest
-import io.piano.android.cxense.model.PerformanceEvent
-import io.piano.android.cxense.model.SegmentsResponse
+import io.piano.android.cxense.model.SegmentLookupRequest
+import io.piano.android.cxense.model.SegmentLookupResponse
 import io.piano.android.cxense.model.TypedSegmentsResponse
 import io.piano.android.cxense.model.User
 import io.piano.android.cxense.model.UserDataRequest
-import io.piano.android.cxense.model.UserExternalData
 import io.piano.android.cxense.model.UserExternalDataRequest
-import io.piano.android.cxense.model.UserExternalDataResponse
 import io.piano.android.cxense.model.UserExternalTypedData
 import io.piano.android.cxense.model.UserExternalTypedDataResponse
 import io.piano.android.cxense.model.UserIdentity
@@ -28,13 +26,12 @@ import retrofit2.http.Url
 
 internal interface CxApi {
     @Authorized
-    @POST(ENDPOINT_USER_SEGMENTS)
-    fun getUserTypedSegments(@Body request: UserSegmentRequest): Call<TypedSegmentsResponse>
+    @POST(ENDPOINT_SEGMENTS_LOOKUP)
+    fun lookupSegments(@Body request: SegmentLookupRequest): Call<SegmentLookupResponse>
 
-    @Deprecated("Use `getUserTypedSegments`")
     @Authorized
     @POST(ENDPOINT_USER_SEGMENTS)
-    fun getUserSegments(@Body request: UserSegmentRequest): Call<SegmentsResponse>
+    fun getUserTypedSegments(@Body request: UserSegmentRequest): Call<TypedSegmentsResponse>
 
     @Authorized
     @POST(ENDPOINT_USER_PROFILE)
@@ -44,19 +41,9 @@ internal interface CxApi {
     @POST(ENDPOINT_READ_USER_EXTERNAL_DATA)
     fun getUserExternalTypedData(@Body request: UserExternalDataRequest): Call<UserExternalTypedDataResponse>
 
-    @Deprecated("Use `getUserExternalTypedData`")
-    @Authorized
-    @POST(ENDPOINT_READ_USER_EXTERNAL_DATA)
-    fun getUserExternalData(@Body request: UserExternalDataRequest): Call<UserExternalDataResponse>
-
     @Authorized
     @POST(ENDPOINT_UPDATE_USER_EXTERNAL_DATA)
     fun setUserExternalTypedData(@Body externalData: UserExternalTypedData): Call<Unit>
-
-    @Deprecated("Use `setUserExternalTypedData`")
-    @Authorized
-    @POST(ENDPOINT_UPDATE_USER_EXTERNAL_DATA)
-    fun setUserExternalData(@Body externalData: UserExternalData): Call<Unit>
 
     @Authorized
     @POST(ENDPOINT_DELETE_USER_EXTERNAL_DATA)
@@ -80,7 +67,6 @@ internal interface CxApi {
     @GET("https://comcluster.cxense.com/dmp/push.gif")
     fun trackDmpEvent(
         @Query("persisted") persistentId: String,
-        @Query(PerformanceEvent.SEGMENT_IDS) segments: List<String>,
         @QueryMap options: Map<String, String>,
     ): Call<ResponseBody>
 

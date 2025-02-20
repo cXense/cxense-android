@@ -17,14 +17,14 @@ internal class PerformanceEventConverter(
 ) : EventConverter() {
     override fun canConvert(event: Event): Boolean = event is PerformanceEvent
 
-    internal fun extractQueryData(eventRecord: EventRecord): Pair<List<String>?, Map<String, String>>? =
+    internal fun extractQueryData(eventRecord: EventRecord): Map<String, String>? =
         jsonAdapter.fromJson(eventRecord.data)?.run {
             val parameters = customParameters.asSequence().map {
                 prepareKey(
                     PerformanceEvent.CUSTOM_PARAMETERS,
                     CustomParameter.GROUP,
                     CustomParameter.ITEM,
-                    it.name
+                    it.name,
                 ) to it.value
             }
             val ids = identities.asSequence().map {
@@ -32,7 +32,7 @@ internal class PerformanceEventConverter(
                     PerformanceEvent.USER_IDS,
                     USER_TYPE,
                     USER_ID,
-                    it.type
+                    it.type,
                 ) to it.id
             }
             val pairs = sequenceOf(
@@ -42,9 +42,9 @@ internal class PerformanceEventConverter(
                 PerformanceEvent.SITE_ID to siteId,
                 PerformanceEvent.ORIGIN to origin,
                 PerformanceEvent.TYPE to eventType,
-                CONSENT to consentOptions.joinToString()
+                CONSENT to consentOptions.joinToString(),
             ) + parameters + ids
-            segments to pairs.toMap()
+            pairs.toMap()
         }
 
     override fun toEventRecord(event: Event): EventRecord? = (event as? PerformanceEvent)?.run {
@@ -55,7 +55,7 @@ internal class PerformanceEventConverter(
             prnd,
             rnd,
             TimeUnit.SECONDS.toMillis(time),
-            mergeKey = mergeKey
+            mergeKey = mergeKey,
         )
     }
 
@@ -70,11 +70,10 @@ internal class PerformanceEventConverter(
                     eventType,
                     prnd ?: old.prnd,
                     old.time,
-                    segments?.takeUnless { it.isEmpty() } ?: old.segments,
                     customParameters.takeUnless { it.isEmpty() } ?: old.customParameters,
                     consentOptions.takeUnless { it.isEmpty() } ?: old.consentOptions,
-                    old.rnd
-                )
+                    old.rnd,
+                ),
             )
         } ?: oldRecord
     }
@@ -82,7 +81,7 @@ internal class PerformanceEventConverter(
     internal fun prepareKey(objectName: String, nameKey: String, valueKey: String, name: String): String = listOf(
         objectName,
         "$nameKey:$name",
-        valueKey
+        valueKey,
     ).joinToString(separator = "/")
 
     companion object {

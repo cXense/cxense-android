@@ -58,7 +58,7 @@ internal data class EventRecord(
             TYPE,
             SPENT_TIME,
             IS_SENT,
-            MERGE_KEY
+            MERGE_KEY,
         )
     }
 }
