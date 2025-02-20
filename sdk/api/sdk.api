@@ -622,6 +622,13 @@ public final class io/piano/android/cxense/model/SegmentLookupRequestJsonAdapter
 	public fun toString ()Ljava/lang/String;
 }
 
+public final class io/piano/android/cxense/model/SegmentLookupRequest_SegmentContextJsonAdapter : com/squareup/moshi/JsonAdapter {
+	public fun <init> (Lcom/squareup/moshi/Moshi;)V
+	public fun fromJson (Lcom/squareup/moshi/JsonReader;)Ljava/lang/Object;
+	public fun toJson (Lcom/squareup/moshi/JsonWriter;Ljava/lang/Object;)V
+	public fun toString ()Ljava/lang/String;
+}
+
 public final class io/piano/android/cxense/model/SegmentLookupResponse {
 	public fun <init> ()V
 	public fun <init> (Ljava/util/List;Ljava/util/List;)V
