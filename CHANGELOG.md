@@ -1,6 +1,6 @@
 # Piano DMP & Content SDK for Android
 
-## v2.7.0-SNAPSHOT
+## v2.7.0
 * Removed deprecated code
 * Add support for `/segment/lookup` API
 * Add support for new segment types
