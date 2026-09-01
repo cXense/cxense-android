@@ -1,5 +1,15 @@
 # Piano DMP & Content SDK for Android
 
+## v2.8.0
+* Updated Proguard rules
+* Updated to Kotlin 2.0.21
+* Updated dependencies:
+  - Kotlin [1.9.24 -> 2.0.21]
+  - com.squareup.moshi:moshi [1.15.1 -> 1.15.2]
+    https://github.com/square/moshi/
+  - org.jetbrains.kotlinx:kotlinx-coroutines-core [1.9.0 -> 1.10.2]
+    https://github.com/Kotlin/kotlinx.coroutines
+
 ## v2.7.0
 * Removed deprecated code
 * Add support for `/segment/lookup` API

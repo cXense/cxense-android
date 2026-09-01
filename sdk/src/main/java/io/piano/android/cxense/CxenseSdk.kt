@@ -85,6 +85,7 @@ public class CxenseSdk internal constructor(
         get() = advertisingIdProvider.limitAdTrackingEnabled
 
     // -------- Work with events
+
     /**
      * Sets callback for each dispatching of events
      *
@@ -388,6 +389,7 @@ public class CxenseSdk internal constructor(
     ).enqueue(callback)
 
     // -------- Persisted API
+
     /**
      * Executes persisted query. You can find some popular endpoints in {@link CxenseConstants}
      *
