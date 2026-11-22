@@ -1,5 +1,6 @@
 plugins {
     alias(libs.plugins.android.library)
+    alias(libs.plugins.binaryCompatibilityBridge)
     alias(libs.plugins.ksp)
     alias(libs.plugins.binaryCompatibility)
     alias(libs.plugins.ktlint)
