@@ -2,7 +2,6 @@ package io.piano.android.cxense
 
 import android.app.Application
 import android.content.Context
-import android.os.Build
 import android.webkit.WebSettings
 import android.webkit.WebView
 import timber.log.Timber
@@ -18,7 +17,7 @@ internal class UserAgentProvider(
     val userAgent: String by lazy { "cx-sdk/$sdkVersion ${context.getDefaultUserAgent()}" }
 
     private fun Context.getDefaultUserAgent(): String = runCatching {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P && packageName != Application.getProcessName()) {
+        if (packageName != Application.getProcessName()) {
             WebView.setDataDirectorySuffix(WEBVIEW_SUFFIX)
         }
         WebSettings.getDefaultUserAgent(this)

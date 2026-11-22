@@ -20,7 +20,7 @@ public class UserExternalTypedData internal constructor(
      * @property identity user identifier with type and id
      * @property externalItems stored key-values for the user.
      */
-    public data class Builder @JvmOverloads constructor(
+    public data class Builder(
         var identity: UserIdentity,
         var externalItems: MutableList<ExternalTypedItem> = mutableListOf(),
     ) {

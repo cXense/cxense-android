@@ -28,7 +28,7 @@ internal class AuthInterceptor(
                 newBuilder()
                     .header(
                         AUTH_HEADER,
-                        cxenseConfiguration.credentialsProvider.run {
+                        with(cxenseConfiguration.credentialsProvider) {
                             createToken(getUsername(), getApiKey())
                         },
                     )
@@ -56,7 +56,6 @@ internal class AuthInterceptor(
         const val AUTH_HEADER = "X-cXense-Authentication"
         private const val ISO_8601 = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
 
-        @JvmStatic
         val DATE_FORMAT: DateFormat = SimpleDateFormat(ISO_8601, Locale.US)
         private const val ALGORITHM = "HmacSHA256"
     }

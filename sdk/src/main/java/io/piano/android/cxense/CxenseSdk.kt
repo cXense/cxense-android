@@ -23,12 +23,16 @@ import io.piano.android.cxense.model.WidgetContext
 import io.piano.android.cxense.model.WidgetItem
 import io.piano.android.cxense.model.WidgetRequest
 import io.piano.android.cxense.model.WidgetVisibilityReport
-import okhttp3.ResponseBody
-import retrofit2.Call
-import java.lang.reflect.ParameterizedType
-import java.util.concurrent.ScheduledExecutorService
-import java.util.concurrent.ScheduledFuture
-import java.util.concurrent.TimeUnit
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.launch
+import retrofit2.Response
+import kotlin.coroutines.cancellation.CancellationException
+import kotlin.time.Duration.Companion.seconds
 
 /**
  * Singleton class used as a facade to the Cxense services
@@ -37,7 +41,7 @@ import java.util.concurrent.TimeUnit
  */
 @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
 public class CxenseSdk internal constructor(
-    private val executor: ScheduledExecutorService,
+    private val coroutineScope: CoroutineScope,
     // Public API.
     @Suppress("unused", "MemberVisibilityCanBePrivate")
     public val configuration: CxenseConfiguration,
@@ -47,14 +51,16 @@ public class CxenseSdk internal constructor(
     private val errorParser: ApiErrorParser,
     private val moshi: Moshi,
     private val eventRepository: EventRepository,
-    private val sendTask: SendTask,
+    private val eventSender: EventSender,
 ) {
     init {
-        configuration.dispatchPeriodListener = { initSendTaskSchedule() }
         initSendTaskSchedule()
     }
 
-    private var scheduled: ScheduledFuture<*>? = null
+    /**
+     * Flow with event dispatch statuses
+     */
+    public val eventStatuses: SharedFlow<List<EventStatus>> = eventSender.eventStatuses
 
     /**
      * The user id used by this SDK. Must be at least 16 characters long.
@@ -87,25 +93,17 @@ public class CxenseSdk internal constructor(
     // -------- Work with events
 
     /**
-     * Sets callback for each dispatching of events
-     *
-     * @param callback callback instance
-     */
-    @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun setDispatchEventsCallback(callback: DispatchEventsCallback?) {
-        sendTask.sendCallback = callback
-    }
-
-    /**
      * Push events to sending queue.
      *
      * @param events the events that should be pushed.
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun pushEvents(vararg events: Event): Unit = executor.execute {
-        eventRepository.putEventsInDatabase(events)
-        if (configuration.sendEventsAtPush) {
-            flushEventQueue()
+    public fun pushEvents(vararg events: Event) {
+        coroutineScope.launch {
+            eventRepository.putEventsInDatabase(events)
+            if (configuration.sendEventsAtPush) {
+                flushEventQueue()
+            }
         }
     }
 
@@ -116,24 +114,24 @@ public class CxenseSdk internal constructor(
      * @param activeTime the active time in seconds.
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    @JvmOverloads
-    public fun trackActiveTime(eventId: String, activeTime: Long = 0): Unit =
-        executor.execute { eventRepository.putEventTime(eventId, activeTime) }
+    public fun trackActiveTime(eventId: String, activeTime: Long = 0) {
+        coroutineScope.launch {
+            eventRepository.putEventTime(eventId, activeTime)
+        }
+    }
 
     /**
      * Forces sending events from queue to server.
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun flushEventQueue(): Unit = executor.execute(sendTask)
+    public fun flushEventQueue() {
+        coroutineScope.launch {
+            eventSender.send()
+        }
+    }
 
-    /**
-     * Returns current event queue status
-     *
-     * @return queue status
-     */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public val queueStatus: QueueStatus
-        get() = QueueStatus(eventRepository.getEventStatuses())
+    public suspend fun getQueueStatus(): QueueStatus = QueueStatus(eventRepository.getEventStatuses())
 
     // -------- Content API
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
@@ -144,22 +142,19 @@ public class CxenseSdk internal constructor(
      * Tracks an url click for the given item
      *
      * @param item the item that contains the click-url
-     * @param callback callback for checking status
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun trackClick(item: WidgetItem, callback: LoadCallback<@JvmSuppressWildcards Unit>): Unit =
-        item.clickUrl?.let { trackClick(it, callback) }
-            ?: callback.onError(BaseException("Can't track this item. Click url is null"))
+    public suspend fun trackClick(item: WidgetItem): Result<Unit> = item.clickUrl?.let { clickUrl ->
+        trackClick(clickUrl)
+    } ?: Result.failure(BaseException("Can't track this item. Click url is null"))
 
     /**
      * Tracks a click for the given click-url
      *
      * @param url the click-url
-     * @param callback callback for checking status
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun trackClick(url: String, callback: LoadCallback<@JvmSuppressWildcards Unit>): Unit =
-        cxApi.trackUrlClick(url).enqueue(callback)
+    public suspend fun trackClick(url: String): Result<Unit> = safeApiCall(errorParser) { cxApi.trackUrlClick(url) }
 
     /**
      * Load widget recommendations
@@ -170,29 +165,28 @@ public class CxenseSdk internal constructor(
      * @param tag Only display results from the branch with the given tag and ignore other conditions.
      * @param prnd Identifier for the page view where the result of this call will be displayed.
      * @param experienceId Experience identifier for C1X
-     * @param callback listener for returning result
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    @JvmOverloads
-    public fun loadWidgetRecommendations(
+    public suspend fun loadWidgetRecommendations(
         widgetId: String,
         widgetContext: WidgetContext? = null,
         user: ContentUser? = null,
         tag: String? = null,
         prnd: String? = null,
         experienceId: String? = null,
-        callback: LoadCallback<List<WidgetItem>>,
-    ): Unit = cxApi.getWidgetData(
-        WidgetRequest(
-            widgetId,
-            configuration.consentSettings.consents,
-            widgetContext,
-            user ?: defaultContentUser,
-            tag,
-            prnd,
-            experienceId,
-        ),
-    ).enqueue(callback) { it.items }
+    ): Result<List<WidgetItem>> = safeApiCall(errorParser) {
+        cxApi.getWidgetData(
+            WidgetRequest(
+                widgetId,
+                configuration.consentSettings.consents,
+                widgetContext,
+                user ?: defaultContentUser,
+                tag,
+                prnd,
+                experienceId,
+            ),
+        )
+    }.map { it.items }
 
     /**
      * Report visibility of recommendations for a content widget.
@@ -200,10 +194,11 @@ public class CxenseSdk internal constructor(
      * @param impressions The list of seen recommendations (impressions) you'd like to report visibility of.
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun reportWidgetVisibilities(
-        callback: LoadCallback<@JvmSuppressWildcards Unit>,
+    public suspend fun reportWidgetVisibilities(
         vararg impressions: Impression,
-    ): Unit = cxApi.reportWidgetVisibility(WidgetVisibilityReport(impressions.toList())).enqueue(callback)
+    ): Result<Unit> = safeApiCall(errorParser) {
+        cxApi.reportWidgetVisibility(WidgetVisibilityReport(impressions.toList()))
+    }
 
     // -------- DMP API
 
@@ -216,38 +211,36 @@ public class CxenseSdk internal constructor(
      * @param shortIds If set the short ids will be included
      * @param segmentContext Segment context information
      */
-    @JvmOverloads
-    public fun lookupSegments(
+    public suspend fun lookupSegments(
         siteGroupIds: List<String>,
         identities: List<UserIdentity>? = null,
         candidateSegmentIds: List<String>? = null,
         shortIds: Boolean = false,
         segmentContext: SegmentContext? = null,
-        callback: LoadCallback<SegmentLookupResponse>,
-    ) {
-        val siteGroups = siteGroupIds
-            .filterNot { it.isEmpty() }
-            .also {
-                require(it.isNotEmpty()) {
-                    "You should provide at least one not empty site group id"
-                }
-            }
+    ): Result<SegmentLookupResponse> {
+        val siteGroups = siteGroupIds.filterNot { it.isEmpty() }
         val segmentsDenied = with(configuration.consentSettings) {
             consentRequired && !segmentAllowed
         }
-        if (segmentsDenied) {
-            callback.onError(ConsentRequiredException())
-            return
+        return when {
+            siteGroups.isEmpty() -> Result.failure(
+                BaseException("You should provide at least one not empty site group id"),
+            )
+
+            segmentsDenied -> Result.failure(ConsentRequiredException())
+
+            else -> safeApiCall(errorParser) {
+                cxApi.lookupSegments(
+                    SegmentLookupRequest(
+                        siteGroups,
+                        identities,
+                        candidateSegmentIds,
+                        shortIds,
+                        segmentContext,
+                    ),
+                )
+            }
         }
-        cxApi.lookupSegments(
-            SegmentLookupRequest(
-                siteGroups,
-                identities,
-                candidateSegmentIds,
-                shortIds,
-                segmentContext,
-            ),
-        ).enqueue(callback)
     }
 
     /**
@@ -258,43 +251,39 @@ public class CxenseSdk internal constructor(
      * @param candidateSegments A list of candidate segments to consider. The response segment matches will be a subset of these candidates.
      * @param segmentFormat The segment format, one of [UserSegmentRequest.SegmentFormat.STANDARD] (the standard segment ID format that can be found in the platform)
      *                      or [UserSegmentRequest.SegmentFormat.SHORT_IDS] (a specially generated shortened version of the segment identifier compatible with some Ad servers).
-     * @param callback a  callback to receive a list of segment identifiers where the specified user is a member
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    @JvmOverloads
-    public fun getUserSegments(
+    public suspend fun getUserSegments(
         identities: List<UserIdentity>,
         siteGroupIds: List<String>,
         candidateSegments: List<CandidateSegment>? = null,
         segmentFormat: UserSegmentRequest.SegmentFormat = UserSegmentRequest.SegmentFormat.STANDARD,
-        callback: LoadCallback<List<Segment>>,
-    ) {
-        require(identities.isNotEmpty()) {
-            "You should provide at least one user identity"
-        }
-        val siteGroups = siteGroupIds
-            .filterNot { it.isEmpty() }
-            .also {
-                require(it.isNotEmpty()) {
-                    "You should provide at least one not empty site group id"
-                }
-            }
+    ): Result<List<Segment>> {
+        val siteGroups = siteGroupIds.filterNot { it.isEmpty() }
         val segmentsDenied = with(configuration.consentSettings) {
             consentRequired && !segmentAllowed
         }
-        if (segmentsDenied) {
-            callback.onError(ConsentRequiredException())
-            return
+        return when {
+            identities.isEmpty() -> Result.failure(BaseException("You should provide at least one user identity"))
+
+            siteGroups.isEmpty() -> Result.failure(
+                BaseException("You should provide at least one not empty site group id"),
+            )
+
+            segmentsDenied -> Result.failure(ConsentRequiredException())
+
+            else -> safeApiCall(errorParser) {
+                cxApi.getUserTypedSegments(
+                    UserSegmentRequest(
+                        identities,
+                        siteGroups,
+                        candidateSegments,
+                        UserSegmentRequest.ResponseFormat.CX_TYPED,
+                        segmentFormat,
+                    ),
+                )
+            }.map { it.segments }
         }
-        cxApi.getUserTypedSegments(
-            UserSegmentRequest(
-                identities,
-                siteGroups,
-                candidateSegments,
-                UserSegmentRequest.ResponseFormat.CX_TYPED,
-                segmentFormat,
-            ),
-        ).enqueue(callback) { it.segments }
     }
 
     /**
@@ -304,17 +293,16 @@ public class CxenseSdk internal constructor(
      * @param groups a collection of strings that specify profile item groups to keep in the returned profile. If not specified, all groups available for the user will be returned
      * @param recent flag whether to only return the most recent user profile information. This can be used to return quickly if response time is important
      * @param identityTypes a collection of external customer identifier types. If an external customer identifier exists for the user, it will be included in the response
-     * @param callback a callback with {@link User} profile
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    @JvmOverloads
-    public fun getUser(
+    public suspend fun getUser(
         identity: UserIdentity,
         groups: List<String>? = null,
         recent: Boolean? = null,
         identityTypes: List<String>? = null,
-        callback: LoadCallback<User>,
-    ): Unit = cxApi.getUser(UserDataRequest(identity, groups, recent, identityTypes)).enqueue(callback)
+    ): Result<User> = safeApiCall(errorParser) {
+        cxApi.getUser(UserDataRequest(identity, groups, recent, identityTypes))
+    }
 
     /**
      * Asynchronously retrieves the external data associated with a given user
@@ -323,70 +311,66 @@ public class CxenseSdk internal constructor(
      * @param type the customer identifier type
      * @param filter a traffic filter of type user-external with required group and optional item/items specified
      * @param groups a list of group names. The result will show a subset of profiles that include these groups.
-     * @param callback a callback with {@link UserExternalData}
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    @JvmOverloads
-    public fun getUserExternalTypedData(
+    public suspend fun getUserExternalTypedData(
         type: String,
         id: String? = null,
         filter: String? = null,
         groups: List<String>? = null,
-        callback: LoadCallback<List<@JvmSuppressWildcards UserExternalTypedData>>,
-    ): Unit = cxApi.getUserExternalTypedData(
-        UserExternalDataRequest(type, id, filter, groups, format = UserExternalDataRequest.ResponseFormat.TYPED),
-    ).enqueue(callback) { it.items }
+    ): Result<List<UserExternalTypedData>> = safeApiCall(errorParser) {
+        cxApi.getUserExternalTypedData(
+            UserExternalDataRequest(
+                type,
+                id,
+                filter,
+                groups,
+                UserExternalDataRequest.ResponseFormat.TYPED,
+            ),
+        )
+    }.map { it.items }
 
     /**
      * Asynchronously sets the external data associated with a given user
      *
      * @param userExternalData external data associated with a user
-     * @param callback a callback
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun setUserExternalTypedData(
-        userExternalData: UserExternalTypedData,
-        callback: LoadCallback<@JvmSuppressWildcards Unit>,
-    ): Unit = cxApi.setUserExternalTypedData(userExternalData).enqueue(callback)
+    public suspend fun setUserExternalTypedData(userExternalData: UserExternalTypedData): Result<Unit> =
+        safeApiCall(errorParser) { cxApi.setUserExternalTypedData(userExternalData) }
 
     /**
      * Asynchronously deletes the external data associated with a given user
      *
      * @param identity user identifier with type and id
-     * @param callback a callback
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun deleteUserExternalData(
-        identity: UserIdentity,
-        callback: LoadCallback<@JvmSuppressWildcards Unit>,
-    ): Unit = cxApi.deleteExternalUserData(identity).enqueue(callback)
+    public suspend fun deleteUserExternalData(identity: UserIdentity): Result<Unit> =
+        safeApiCall(errorParser) { cxApi.deleteExternalUserData(identity) }
 
     /**
      * Asynchronously retrieves a registered external identity mapping for a Cxense identifier
      *
      * @param cxenseId the Cxense identifier of the user.
      * @param type the identity mapping type (customer identifier type) that contains the mapping.
-     * @param callback a callback with {@link UserIdentity}
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun getUserExternalLink(cxenseId: String, type: String, callback: LoadCallback<UserIdentity>): Unit =
-        cxApi.getUserExternalLink(UserIdentityMappingRequest(cxenseId, type)).enqueue(callback)
+    public suspend fun getUserExternalLink(cxenseId: String, type: String): Result<UserIdentity> =
+        safeApiCall(errorParser) { cxApi.getUserExternalLink(UserIdentityMappingRequest(cxenseId, type)) }
 
     /**
      * Asynchronously register a new identity-mapping for the given user
      *
      * @param cxenseId the Cxense identifier to map this user to
      * @param identity user identifier with type and id
-     * @param callback a callback with {@link UserIdentity}
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    public fun addUserExternalLink(
-        cxenseId: String,
-        identity: UserIdentity,
-        callback: LoadCallback<UserIdentity>,
-    ): Unit = cxApi.addUserExternalLink(
-        UserIdentityMappingRequest(cxenseId, identity.type, identity.id),
-    ).enqueue(callback)
+    public suspend fun addUserExternalLink(cxenseId: String, identity: UserIdentity): Result<UserIdentity> =
+        safeApiCall(errorParser) {
+            cxApi.addUserExternalLink(
+                UserIdentityMappingRequest(cxenseId, identity.type, identity.id),
+            )
+        }
 
     // -------- Persisted API
 
@@ -396,77 +380,56 @@ public class CxenseSdk internal constructor(
      * @param url               API endpoint
      * @param persistentQueryId query id
      * @param data              data for sending as request body
-     * @param callback          callback for response data
-     * @param <T>               response type
      */
     @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
-    @JvmOverloads
-    public fun <T : Any> executePersistedQuery(
+    public suspend inline fun <reified T : Any> executePersistedQuery(
         url: String,
         persistentQueryId: String,
         data: Any? = null,
-        callback: LoadCallback<T>,
-    ) {
+    ): Result<T> = executePersistedQuery(url, persistentQueryId, T::class.java, data)
+
+    @Suppress("unused", "MemberVisibilityCanBePrivate") // Public API.
+    public suspend fun <T : Any> executePersistedQuery(
+        url: String,
+        persistentQueryId: String,
+        clazz: Class<T>,
+        data: Any? = null,
+    ): Result<T> = safeApiCall(errorParser) {
         with(cxApi) {
             data?.let { postPersisted(url, persistentQueryId, it) } ?: getPersisted(url, persistentQueryId)
-        }.enqueue(createGenericCallback(callback))
+        }
+    }.mapCatching { response ->
+        val jsonAdapter = moshi.adapter(clazz)
+        val reader = JsonReader.of(response.source())
+        jsonAdapter.fromJson(reader) ?: throw BaseException(IllegalArgumentException("Result is null"))
     }
 
     // -------- Internal methods
-    private fun <T : Any> Call<T>.enqueue(callback: LoadCallback<T>) = enqueue(callback.transform())
-
-    private fun <T : Any, U : Any> Call<T>.enqueue(callback: LoadCallback<U>, function: (T) -> U) =
-        enqueue(callback.transform(function))
-
-    private fun <T : Any, U : Any> LoadCallback<U>.transform(function: (T) -> U) = object : LoadCallback<T> {
-        override fun onSuccess(data: T) = this@transform.onSuccess(function(data))
-
-        override fun onError(throwable: Throwable) = this@transform.onError(throwable)
-    }.transform()
-
-    private fun <T : Any> LoadCallback<T>.transform() = ApiCallback(this, errorParser)
-
-    private fun <T : Any> createGenericCallback(callback: LoadCallback<T>) = object : LoadCallback<ResponseBody> {
-        override fun onSuccess(data: ResponseBody) = try {
-            val callbackClazz = callback::class.java.genericInterfaces.first() as ParameterizedType
-
-            @Suppress("UNCHECKED_CAST")
-            val clazz = callbackClazz.actualTypeArguments.first() as Class<T>
-            val jsonAdapter = moshi.adapter(clazz)
-            val reader = JsonReader.of(data.source())
-            callback.onSuccess(requireNotNull(jsonAdapter.fromJson(reader)))
-        } catch (e: Exception) {
-            callback.onError(e)
-        }
-
-        override fun onError(throwable: Throwable) = callback.onError(throwable)
-    }.transform()
-
+    @OptIn(ExperimentalCoroutinesApi::class)
     private fun initSendTaskSchedule() {
-        scheduled?.cancel(false)
-        scheduled = executor.scheduleWithFixedDelay(
-            sendTask,
-            DISPATCH_INITIAL_DELAY,
-            configuration.dispatchPeriod,
-            TimeUnit.MILLISECONDS,
-        )
+        coroutineScope.launch {
+            configuration.dispatchPeriodFlow.flatMapLatest { interval ->
+                flow {
+                    delay(DISPATCH_INITIAL_DELAY)
+                    while (true) {
+                        emit(Unit)
+                        delay(interval)
+                    }
+                }
+            }.collect {
+                eventSender.send()
+            }
+        }
     }
 
     public companion object {
         /**
          * Gets singleton SDK instance.
          */
-        @JvmStatic
-        @Suppress("unused")
         public fun getInstance(): CxenseSdk = DependenciesProvider.getInstance().cxenseSdk
 
-        @JvmStatic
         public fun contentUrl(siteId: String, contentId: String): String = "https://$siteId.content.id/$contentId"
 
-        private val DISPATCH_INITIAL_DELAY = TimeUnit.SECONDS.toMillis(10)
-    }
-
-    public fun interface DispatchEventsCallback {
-        public fun onDispatch(statuses: List<EventStatus>)
+        private val DISPATCH_INITIAL_DELAY = 10.seconds
     }
 }

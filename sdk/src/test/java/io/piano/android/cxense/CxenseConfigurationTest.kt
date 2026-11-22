@@ -1,54 +1,81 @@
 package io.piano.android.cxense
 
-import org.mockito.kotlin.any
-import org.mockito.kotlin.never
-import org.mockito.kotlin.spy
-import org.mockito.kotlin.verify
-import java.util.concurrent.TimeUnit
+import io.piano.android.cxense.CxenseConfiguration.Companion.MIN_DISPATCH_PERIOD
+import io.piano.android.cxense.CxenseConfiguration.Companion.MIN_OUTDATE_PERIOD
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.test.runTest
 import kotlin.test.BeforeTest
 import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.time.Duration
+import kotlin.time.Duration.Companion.milliseconds
 
 class CxenseConfigurationTest {
-    private val dispatchPeriodListener: ((Long) -> Unit) = spy()
-
     private lateinit var configuration: CxenseConfiguration
 
     @BeforeTest
     fun setUp() {
         configuration = CxenseConfiguration()
-        configuration.dispatchPeriodListener = dispatchPeriodListener
     }
 
     @Test
-    fun setDifferentDispatchPeriod() {
-        configuration.dispatchPeriod(configuration.dispatchPeriod * 2, TimeUnit.MILLISECONDS)
-        verify(dispatchPeriodListener).invoke(any())
+    fun setDifferentDispatchPeriod() = runTest {
+        val values = mutableListOf<Duration>()
+        val job = launch {
+            configuration.dispatchPeriodFlow.collect {
+                values.add(it)
+            }
+        }
+        kotlinx.coroutines.yield()
+
+        configuration.dispatchPeriod = configuration.dispatchPeriod * 2
+        kotlinx.coroutines.yield()
+
+        assertEquals(2, values.size)
+        assertEquals(CxenseConfiguration.DEFAULT_DISPATCH_PERIOD, values[0])
+        assertEquals(CxenseConfiguration.DEFAULT_DISPATCH_PERIOD * 2, values[1])
+
+        job.cancel()
     }
 
     @Test
-    fun setSameDispatchPeriod() {
-        configuration.dispatchPeriod(configuration.dispatchPeriod, TimeUnit.MILLISECONDS)
-        verify(dispatchPeriodListener, never()).invoke(any())
+    fun setSameDispatchPeriod() = runTest {
+        val values = mutableListOf<Duration>()
+        val job = launch {
+            configuration.dispatchPeriodFlow.collect {
+                values.add(it)
+            }
+        }
+        kotlinx.coroutines.yield()
+
+        val period = configuration.dispatchPeriod
+        configuration.dispatchPeriod = period
+        kotlinx.coroutines.yield()
+
+        assertEquals(1, values.size)
+        assertEquals(period, values[0])
+
+        job.cancel()
     }
 
     @Test
     fun setInvalidDispatchPeriod() {
         assertFailsWithMessage<IllegalArgumentException>(
-            "greater than $MIN_DISPATCH_PERIOD_SECONDS seconds",
+            "greater than $MIN_DISPATCH_PERIOD",
             "Expected fail for dispatch period",
         ) {
-            configuration.dispatchPeriod(MIN_DISPATCH_PERIOD - 1, TimeUnit.MILLISECONDS)
+            configuration.dispatchPeriod = MIN_DISPATCH_PERIOD - 1.milliseconds
         }
-        verify(dispatchPeriodListener, never()).invoke(any())
+        assertEquals(MIN_DISPATCH_PERIOD, CxenseConfiguration.MIN_DISPATCH_PERIOD)
     }
 
     @Test
     fun setInvalidOutdatePeriod() {
         assertFailsWithMessage<IllegalArgumentException>(
-            "greater than $MIN_OUTDATE_PERIOD_SECONDS seconds",
-            "Expected fail for dispatch period",
+            "greater than $MIN_OUTDATE_PERIOD",
+            "Expected fail for outdate period",
         ) {
-            configuration.outdatePeriod(MIN_OUTDATE_PERIOD - 1, TimeUnit.MILLISECONDS)
+            configuration.outdatePeriod = MIN_OUTDATE_PERIOD - 1.milliseconds
         }
     }
 }

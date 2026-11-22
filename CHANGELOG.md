@@ -1,5 +1,21 @@
 # Piano DMP & Content SDK for Android
 
+## v3.0.0-SNAPSHOT
+* Migrated to Kotlin coroutines support instead of callbacks across SDK APIs
+* Updated dependencies:
+  - Kotlin [2.0.21 -> 2.3.21]
+    https://kotlinlang.org/
+  - org.jetbrains.kotlinx:kotlinx-coroutines-core [1.10.2 -> 1.11.0]
+    https://github.com/Kotlin/kotlinx.coroutines
+  - com.squareup.retrofit2:retrofit [2.11.0 -> 3.0.0]
+    https://github.com/square/retrofit
+  - com.squareup.okhttp3:okhttp [4.12.0 -> 5.4.0]
+    https://square.github.io/okhttp/
+  - androidx.appcompat:appcompat [1.7.1 -> 1.8.0]
+    https://developer.android.com/jetpack/androidx/releases/appcompat
+  - androidx.annotation:annotation [1.9.1 -> 1.11.0]
+    https://developer.android.com/jetpack/androidx/releases/annotation
+
 ## v2.8.0
 * Updated Proguard rules
 * Updated to Kotlin 2.0.21

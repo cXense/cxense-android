@@ -19,43 +19,43 @@ internal class EventRepository(
     private val databaseHelper: DatabaseHelper,
     private val eventConverters: List<EventConverter>,
 ) {
-    fun putEventsInDatabase(events: Array<out Event>) {
+    suspend fun putEventsInDatabase(events: Array<out Event>) {
         events.forEach { e ->
-            try {
+            runSuspendCatching {
                 eventConverters.firstOrNull {
                     it.canConvert(e)
                 }?.buildEventRecord(e)?.let {
                     putEventRecordInDatabase(it)
                 }
-            } catch (ex: Exception) {
-                Timber.e(ex, "Error at pushing event")
+            }.onFailure {
+                Timber.e(it, "Error at pushing event")
             }
         }
     }
 
-    fun putEventRecordInDatabase(eventRecord: EventRecord): Long = databaseHelper.save(eventRecord)
+    suspend fun putEventRecordInDatabase(eventRecord: EventRecord): Long = databaseHelper.save(eventRecord)
 
-    fun deleteOutdatedEvents(outdatePeriod: Long): Int = databaseHelper.delete(
+    suspend fun deleteOutdatedEvents(outdatePeriod: Long): Int = databaseHelper.delete(
         "${EventRecord.TIME} < ?",
         (System.currentTimeMillis() - outdatePeriod).toString(),
     )
 
-    fun getNotSubmittedPvEvents() = getEvents(
+    suspend fun getNotSubmittedPvEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} = ?",
         arrayOf(PageViewEvent.EVENT_TYPE),
     )
 
-    fun getNotSubmittedDmpEvents() = getEvents(
+    suspend fun getNotSubmittedDmpEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} <> ? AND ${EventRecord.TYPE} <> ?",
         arrayOf(PageViewEvent.EVENT_TYPE, ConversionEvent.EVENT_TYPE),
     )
 
-    fun getNotSubmittedConversionEvents() = getEvents(
+    suspend fun getNotSubmittedConversionEvents() = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.TYPE} = ?",
         arrayOf(ConversionEvent.EVENT_TYPE),
     )
 
-    internal fun getEvents(
+    internal suspend fun getEvents(
         selection: String?,
         selectionArgs: Array<out String?>?,
         limit: String? = null,
@@ -66,14 +66,14 @@ internal class EventRepository(
         limit = limit,
     ).map { it.toEventRecord() }
 
-    fun getPvEventFromDatabase(eventId: String): EventRecord? = databaseHelper.query(
+    suspend fun getPvEventFromDatabase(eventId: String): EventRecord? = databaseHelper.query(
         selection = "${EventRecord.CUSTOM_ID} = ? AND ${EventRecord.TYPE} = ?",
         selectionArgs = arrayOf(eventId, PageViewEvent.EVENT_TYPE),
         orderBy = "${EventRecord.TIME} DESC",
         limit = "1",
     ).firstOrNull()?.toEventRecord()
 
-    fun getEventStatuses(): List<EventStatus> = databaseHelper.query(
+    suspend fun getEventStatuses(): List<EventStatus> = databaseHelper.query(
         columns = arrayOf(EventRecord.CUSTOM_ID, EventRecord.IS_SENT),
         orderBy = "${EventRecord.TIME} ASC",
     ).map {
@@ -83,12 +83,12 @@ internal class EventRepository(
         )
     }
 
-    fun putEventTime(eventId: String, activeTime: Long) {
-        try {
-            val record = getPvEventFromDatabase(eventId) ?: return
+    suspend fun putEventTime(eventId: String, activeTime: Long) {
+        runSuspendCatching {
+            val record = getPvEventFromDatabase(eventId) ?: return@runSuspendCatching
             val time = activeTime.takeIf { it > 0 }
                 ?: TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - record.timestamp)
-            eventConverters.mapNotNull { it as? PageViewEventConverter }
+            eventConverters.filterIsInstance<PageViewEventConverter>()
                 .firstOrNull()
                 ?.apply {
                     putEventRecordInDatabase(
@@ -98,14 +98,20 @@ internal class EventRepository(
                         ),
                     )
                 }
-        } catch (e: Exception) {
-            Timber.e(e, "Error at tracking time")
+        }.onFailure {
+            Timber.e(it, "Error at tracking time")
         }
     }
 
-    private fun EventConverter.buildEventRecord(e: Event): EventRecord? = getEvents(
+    private suspend fun EventConverter.buildEventRecord(e: Event): EventRecord? = getEvents(
         "$NOT_SENT_FILTER AND ${EventRecord.MERGE_KEY} = ? AND ${EventRecord.TIME} > ?",
-        arrayOf(e.mergeKey.toString(), (System.currentTimeMillis() - configuration.eventsMergePeriod).toString()),
+        arrayOf(
+            e.mergeKey.toString(),
+            (
+                System.currentTimeMillis() -
+                    configuration.eventsMergePeriod.inWholeMilliseconds
+                ).toString(),
+        ),
         limit = "1",
     ).firstOrNull()?.let {
         update(it, e)

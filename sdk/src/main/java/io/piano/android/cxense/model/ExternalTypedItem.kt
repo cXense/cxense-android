@@ -26,8 +26,6 @@ public class ExternalTypedItem internal constructor(
         private const val GROUP_NAME_MAX_LENGTH = 26
         private val GROUP_REGEXP = "^[a-zA-Z\\d-]{1,$GROUP_NAME_MAX_LENGTH}$".toRegex()
 
-        @JvmName("create")
-        @JvmStatic
         public operator fun invoke(group: String, item: TypedItem): ExternalTypedItem {
             require(item != TypedItem.Unknown)
             return ExternalTypedItem(group, item)

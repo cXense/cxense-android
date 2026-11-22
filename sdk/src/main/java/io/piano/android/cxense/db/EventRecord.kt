@@ -48,7 +48,6 @@ internal data class EventRecord(
 
         const val TABLE_NAME = "event"
 
-        @JvmStatic
         val COLUMNS = arrayOf(
             BaseColumns._ID,
             CUSTOM_ID, DATA,

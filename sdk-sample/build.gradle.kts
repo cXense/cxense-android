@@ -1,15 +1,14 @@
 plugins {
     alias(libs.plugins.android.app)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.android.secrets)
 }
 
 android {
     namespace = "com.example.cxensesdk"
     defaultConfig {
-        minSdk = 21
-        compileSdk = 34
-        targetSdk = 34
+        minSdk = 28
+        compileSdk = 36
+        targetSdk = 36
         applicationId = "com.example.cxensesdk"
         versionCode = 1
         versionName = "1.0"
@@ -26,17 +25,6 @@ android {
         buildConfig = true
         viewBinding = true
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
-}
-
-kotlin {
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
 }
 
 secrets {
@@ -50,4 +38,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.recyclerView)
     implementation(libs.viewBindingProperty)
+    implementation(libs.kotlinCoroutines)
+    implementation(libs.kotlinCoroutinesAndroid)
+    implementation(libs.lifecycleRuntime)
 }

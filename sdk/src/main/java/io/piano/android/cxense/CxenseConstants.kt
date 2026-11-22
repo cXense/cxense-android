@@ -1,44 +1,4 @@
-@file:JvmName("CxenseConstants")
-
 package io.piano.android.cxense
-
-import java.util.concurrent.TimeUnit
-
-/**
- * Default dispatch period for events in milliseconds
- */
-@get:JvmName("getDefaultDispatchPeriod")
-public val DEFAULT_DISPATCH_PERIOD: Long = TimeUnit.SECONDS.toMillis(300)
-
-/**
- * Minimum dispatch period for events in seconds
- */
-internal const val MIN_DISPATCH_PERIOD_SECONDS = 10L
-
-/**
- * Minimum dispatch period for events in milliseconds
- */
-@get:JvmName("getMinDispatchPeriod")
-public val MIN_DISPATCH_PERIOD: Long = TimeUnit.SECONDS.toMillis(MIN_DISPATCH_PERIOD_SECONDS)
-
-/**
- * Default out-date period for events in milliseconds
- */
-@get:JvmName("getDefaultOutdatedPeriod")
-public val DEFAULT_OUTDATED_PERIOD: Long = TimeUnit.DAYS.toMillis(7)
-
-/**
- * Minimum outdate period for events in milliseconds
- */
-@get:JvmName("getMinOutdatePeriodSeconds")
-internal val MIN_OUTDATE_PERIOD_SECONDS = TimeUnit.MINUTES.toSeconds(10)
-
-/**
- * Minimum outdate period for events in milliseconds
- */
-@get:JvmName("getMinOutdatePeriod")
-public val MIN_OUTDATE_PERIOD: Long = TimeUnit.MINUTES.toMillis(10)
-
 /**
  * Endpoint for getting user segments
  */

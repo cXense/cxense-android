@@ -1,12 +1,9 @@
 package io.piano.android.cxense
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-import android.os.Build
-import android.telephony.TelephonyManager
 import android.util.DisplayMetrics
 import androidx.core.content.ContextCompat
 import timber.log.Timber
@@ -46,8 +43,11 @@ internal class DeviceInfoProvider(
     private fun NetworkCapabilities.toNetworkStatus(): CxenseConfiguration.NetworkStatus = when {
         hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
             hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET) -> CxenseConfiguration.NetworkStatus.WIFI
+
         hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) -> CxenseConfiguration.NetworkStatus.MOBILE
+
         hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) -> CxenseConfiguration.NetworkStatus.GPRS
+
         else -> CxenseConfiguration.NetworkStatus.NONE
     }
 
@@ -57,42 +57,8 @@ internal class DeviceInfoProvider(
      * @return {@code NetworkStatus} instance
      */
 
-    fun getCurrentNetworkStatus(): CxenseConfiguration.NetworkStatus {
-        val manager = ContextCompat.getSystemService(context, ConnectivityManager::class.java)
-            ?: return CxenseConfiguration.NetworkStatus.NONE
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            return manager.getNetworkCapabilities(manager.activeNetwork)?.toNetworkStatus()
-                ?: CxenseConfiguration.NetworkStatus.NONE
-        } else {
-            @Suppress("DEPRECATION")
-            val activeNetworkInfo = manager.activeNetworkInfo
-            @Suppress("DEPRECATION")
-            return when {
-                activeNetworkInfo == null || !activeNetworkInfo.isConnected -> CxenseConfiguration.NetworkStatus.NONE
-                activeNetworkInfo.type == ConnectivityManager.TYPE_WIFI -> CxenseConfiguration.NetworkStatus.WIFI
-                else -> {
-                    val telephonyManager =
-                        ContextCompat.getSystemService(context, TelephonyManager::class.java)
-                    @SuppressLint("MissingPermission")
-                    when {
-                        telephonyManager == null -> CxenseConfiguration.NetworkStatus.NONE
-                        telephonyManager.networkType in MOBILE_NETWORK_TYPES -> CxenseConfiguration.NetworkStatus.MOBILE
-                        else -> CxenseConfiguration.NetworkStatus.GPRS
-                    }
-                }
-            }
-        }
-    }
-
-    companion object {
-        @JvmStatic
-        val MOBILE_NETWORK_TYPES = arrayOf(
-            TelephonyManager.NETWORK_TYPE_HSDPA,
-            TelephonyManager.NETWORK_TYPE_HSPA,
-            TelephonyManager.NETWORK_TYPE_HSPAP,
-            TelephonyManager.NETWORK_TYPE_HSUPA,
-            TelephonyManager.NETWORK_TYPE_LTE,
-        )
-    }
+    fun getCurrentNetworkStatus(): CxenseConfiguration.NetworkStatus =
+        ContextCompat.getSystemService(context, ConnectivityManager::class.java)?.let { manager ->
+            manager.getNetworkCapabilities(manager.activeNetwork)?.toNetworkStatus()
+        } ?: CxenseConfiguration.NetworkStatus.NONE
 }

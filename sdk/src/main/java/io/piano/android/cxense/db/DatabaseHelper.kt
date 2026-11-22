@@ -6,9 +6,9 @@ import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import android.provider.BaseColumns
-import androidx.annotation.RestrictTo
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
-@RestrictTo(RestrictTo.Scope.LIBRARY)
 internal class DatabaseHelper(
     context: Context,
 ) : SQLiteOpenHelper(context, DATABASE_NAME, null, DATABASE_VERSION) {
@@ -28,7 +28,6 @@ internal class DatabaseHelper(
     fun migrate(db: SQLiteDatabase?, version: Int) {
         when (version) {
             0 -> // database does not exist, create it
-                // database does not exist, create it
                 db?.execSQL(
                     """
                         CREATE TABLE ${EventRecord.TABLE_NAME} (
@@ -44,6 +43,7 @@ internal class DatabaseHelper(
                         );
                     """.trimIndent(),
                 )
+
             1 -> db?.execSQL(
                 """
                     ALTER TABLE ${EventRecord.TABLE_NAME} 
@@ -53,27 +53,30 @@ internal class DatabaseHelper(
         }
     }
 
-    fun save(eventRecord: EventRecord): Long = eventRecord.id?.let { id ->
-        writableDatabase.update(
+    suspend fun save(eventRecord: EventRecord): Long = withContext(Dispatchers.IO) {
+        eventRecord.id?.let { id ->
+            writableDatabase.update(
+                EventRecord.TABLE_NAME,
+                eventRecord.toContentValues(),
+                "${BaseColumns._ID} = ?",
+                arrayOf(id.toString()),
+            ).toLong()
+        } ?: writableDatabase.insert(
             EventRecord.TABLE_NAME,
+            null,
             eventRecord.toContentValues(),
-            "${BaseColumns._ID} = ?",
-            arrayOf(id.toString()),
-        ).toLong()
-    } ?: writableDatabase.insert(
-        EventRecord.TABLE_NAME,
-        null,
-        eventRecord.toContentValues(),
-    )
+        )
+    }
 
-    fun delete(eventRecord: EventRecord): Int = eventRecord.id?.let { id ->
+    suspend fun delete(eventRecord: EventRecord): Int = eventRecord.id?.let { id ->
         delete("${BaseColumns._ID} = ?", id.toString())
     } ?: -1
 
-    fun delete(whereClause: String?, vararg whereArgs: String): Int =
+    suspend fun delete(whereClause: String?, vararg whereArgs: String): Int = withContext(Dispatchers.IO) {
         writableDatabase.delete(EventRecord.TABLE_NAME, whereClause, whereArgs)
+    }
 
-    fun query(
+    suspend fun query(
         columns: Array<String>? = EventRecord.COLUMNS,
         selection: String? = null,
         selectionArgs: Array<out String?>? = null,
@@ -81,26 +84,27 @@ internal class DatabaseHelper(
         having: String? = null,
         orderBy: String? = "${EventRecord.TIME} ASC",
         limit: String? = null,
-    ): List<ContentValues> = readableDatabase.query(
-        EventRecord.TABLE_NAME,
-        columns,
-        selection,
-        selectionArgs,
-        groupBy,
-        having,
-        orderBy,
-        limit,
-    ).use { c ->
-        generateSequence { if (c.moveToNext()) c else null }
-            .map(Companion::cursorRowToContentValues)
-            .toList()
+    ): List<ContentValues> = withContext(Dispatchers.IO) {
+        readableDatabase.query(
+            EventRecord.TABLE_NAME,
+            columns,
+            selection,
+            selectionArgs,
+            groupBy,
+            having,
+            orderBy,
+            limit,
+        ).use { c ->
+            generateSequence { if (c.moveToNext()) c else null }
+                .map(Companion::cursorRowToContentValues)
+                .toList()
+        }
     }
 
     companion object {
         const val DATABASE_VERSION = 2
         private const val DATABASE_NAME = "tracks.db"
 
-        @JvmStatic
         private fun cursorRowToContentValues(c: Cursor): ContentValues = ContentValues()
             .apply {
                 for (i in 0 until c.columnCount) {

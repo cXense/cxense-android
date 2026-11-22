@@ -14,14 +14,4 @@ repositories {
 }
 
 dependencies {
-    implementation(libs.versionUpdater)
-}
-
-gradlePlugin {
-    plugins {
-        register("dependencies-updater") {
-            id = "dependencies-updater"
-            implementationClass = "io.piano.android.dependencies.DependenciesUpdaterPlugin"
-        }
-    }
 }

@@ -61,7 +61,6 @@ public class PerformanceEvent internal constructor(
         var customParameters: MutableList<CustomParameter> = mutableListOf(),
     ) {
 
-        @JvmOverloads
         public constructor(
             siteId: String,
             origin: String,

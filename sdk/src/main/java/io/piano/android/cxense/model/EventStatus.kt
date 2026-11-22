@@ -10,5 +10,5 @@ package io.piano.android.cxense.model
 public class EventStatus(
     public val eventId: String?,
     public val isSent: Boolean,
-    public val exception: Exception? = null,
+    public val exception: Throwable? = null,
 )

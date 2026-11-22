@@ -91,7 +91,6 @@ public class ConsentSettings {
     public fun adAllowed(value: Boolean): ConsentSettings = apply { adAllowed = value }
 
     private companion object {
-        @JvmStatic
         private val mapping = mapOf(
             "consentRequired" to "y",
             "pvAllowed" to "pv",

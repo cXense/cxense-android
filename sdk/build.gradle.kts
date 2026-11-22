@@ -1,6 +1,5 @@
 plugins {
     alias(libs.plugins.android.library)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.ksp)
     alias(libs.plugins.binaryCompatibility)
     alias(libs.plugins.ktlint)
@@ -8,20 +7,14 @@ plugins {
     alias(libs.plugins.moshiIR)
 }
 
-@Suppress("PropertyName")
-val GROUP: String by project
-
-@Suppress("PropertyName")
-val VERSION_NAME: String by project
-
-group = GROUP
-version = VERSION_NAME
+group = project.property("GROUP").toString()
+version = project.property("VERSION_NAME").toString()
 
 android {
     namespace = "io.piano.android.cxense"
     defaultConfig {
-        minSdk = 21
-        compileSdk = 34
+        minSdk = 28
+        compileSdk = 36
         val authority = "CxSdkInitProvider"
         buildConfigField("String", "SDK_VERSION", """"$version"""")
         buildConfigField("String", "SDK_NAME", """"cxense"""")
@@ -47,22 +40,14 @@ android {
     lint {
         abortOnError = false
     }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
-    }
 }
 
 kotlin {
     explicitApi()
-    jvmToolchain {
-        languageVersion.set(JavaLanguageVersion.of(11))
-    }
 }
 
 ktlint {
-    version.set("1.7.1")
+    version.set("1.8.0")
     android.set(true)
 }
 
@@ -76,11 +61,12 @@ dependencies {
     implementation(libs.moshiAdapters)
     api(libs.okhttpLogging)
     api(libs.timber)
-    compileOnly(libs.kotlinCoroutines)
+    api(libs.kotlinCoroutines)
 
     testImplementation(libs.kotlinJunit)
     testImplementation(libs.mockitoKotlin)
     testImplementation(libs.mockitoCore)
     testImplementation(libs.junit)
     testImplementation(libs.okhttpMockServer)
+    testImplementation(libs.kotlinCoroutinesTest)
 }
